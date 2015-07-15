@@ -2,7 +2,7 @@ void Trig_Game_Start_Actions() {
 	int difficulty_num = 4 // Number of choices available
 	int i = 0
 	while (i <= difficulty_num) {
-		if (GetClickedButton() == udg_MENU_Options[i]) {
+		if (GetClickedButton() == DIFFICULTY_BUTTONS[i]) {
 			DIFFICULTY = i
 			break
 		}
@@ -12,7 +12,7 @@ void Trig_Game_Start_Actions() {
 	PauseGame(false)
 	
 	// Spawn and destroy a helicopter above the survivors. Pretty immersive, huh?
-	location temp = Location(GetLocationX(udg_GAME_Center), GetLocationY(udg_GAME_Center) + 50)
+	location temp = Location(GetLocationX(MAP_CENTER), GetLocationY(MAP_CENTER) + 50)
 	unit helicopter = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n009', temp, 0)
 	KillUnit(helicopter)
 	RemoveLocation(temp)
@@ -49,6 +49,6 @@ void Trig_Game_Start_Actions() {
 //===========================================================================
 void InitTrig_Game_Start() {
 	trigger t = CreateTrigger()
-	TriggerRegisterDialogEvent(t, udg_MENU_Difficulty_Menu)
+	TriggerRegisterDialogEvent(t, DIFFICULTY_MENU)
 	TriggerAddAction(t, function Trig_Game_Start_Actions)
 }
