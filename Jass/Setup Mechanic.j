@@ -1,89 +1,141 @@
-void Setup_Mechanic() {
-	// -------- Set Engines --------
-	// Heat
-	MECH_ENGINE_List[0] = 'I005'
-	MECH_ENGINE_FuelTank[0] = 'A00M'
-	MECH_ENGINE_Refuel[0] = 'A013'
-	MECH_ENGINE_Speed[0] = 'A00S'
-	MECH_ENGINE_Usage[0] = 'A00Z'
-	// Steam
-	MECH_ENGINE_List[1] = 'I006'
-	MECH_ENGINE_FuelTank[1] = 'A00N'
-	MECH_ENGINE_Refuel[1] = 'A01O'
-	MECH_ENGINE_Speed[1] = 'A00T'
-	MECH_ENGINE_Usage[1] = 'A00Z'
-	// Diesel
-	MECH_ENGINE_List[2] = 'I007'
-	MECH_ENGINE_FuelTank[2] = 'A00O'
-	MECH_ENGINE_Refuel[2] = 'A01P'
-	MECH_ENGINE_Speed[2] = 'A00U'
-	MECH_ENGINE_Usage[2] = 'A010'
-	// Gas
-	MECH_ENGINE_List[3] = 'I008'
-	MECH_ENGINE_FuelTank[3] = 'A00O'
-	MECH_ENGINE_Refuel[3] = 'A01Q'
-	MECH_ENGINE_Speed[3] = 'A00V'
-	MECH_ENGINE_Usage[3] = 'A00Z'
-	// Electric
-	MECH_ENGINE_List[4] = 'I009'
-	MECH_ENGINE_FuelTank[4] = 'A00P'
-	MECH_ENGINE_Refuel[4] = 'A01R'
-	MECH_ENGINE_Speed[4] = 'A00W'
-	MECH_ENGINE_Usage[4] = 'A011'
-	// Hybrid
-	MECH_ENGINE_List[5] = 'I00A'
-	MECH_ENGINE_FuelTank[5] = 'A00Q'
-	MECH_ENGINE_Refuel[5] = 'A01S'
-	MECH_ENGINE_Speed[5] = 'A00X'
-	MECH_ENGINE_Usage[5] = 'A011'
-	// Reactor
-	MECH_ENGINE_List[6] = 'I00B'
-	MECH_ENGINE_FuelTank[6] = 'A00R'
-	MECH_ENGINE_Refuel[6] = 'A01S'
-	MECH_ENGINE_Speed[6] = 'A00Y'
-	MECH_ENGINE_Usage[6] = 'A012'
+globals
+	int ENGINE_NUM = 7
+	string array ENGINE_NAME
+	int array ENGINE_LIST
+	int array ENGINE_FUELTANK
+	int array ENGINE_REFUEL
+	int array ENGINE_SPEED
+	int array ENGINE_USAGE
 	
-	// -------- Set Chassis --------
+	int CHASSIS_NUM = 8
+	string array CHASSIS_NAME
+	int array CHASSIS_LIST
+	int array CHASSIS_ARMOUR
+	int array CHASSIS_HEALTH
+	int array CHASSIS_SPEED
+	
+	int BLUEPRINTS_JEEP = 'I00Q'
+	int BLUEPRINTS_HUMVEE = 'I00R'
+	int BLUEPRINTS_TANK = 'I00S'
+	int BLUEPRINTS_COBRA = 'I00T'
+	int BLUEPRINTS_TRANSPORT = 'I00U'
+	int BLUEPRINTS_AAHELI = 'I00V'
+	
+	int VEHICLE_JEEP = 'h00G'
+	int VEHICLE_HUMVEE = 'h00G' // Haven't made Humvee yet
+	int VEHICLE_TANK = 'h00H'
+	int VEHICLE_COBRA = 'n009'
+	int VEHICLE_TRANSPORT = 'n005'
+	int VEHICLE_AAHELI = 'n00B' // lol, n00b
+endglobals
+
+void Setup_Mechanic() {
+	/////////////
+	// ENGINES //
+	/////////////
+	
+	// Heat
+	ENGINE_NAME[0] = "Heat"
+	ENGINE_LIST[0] = 'I005'
+	ENGINE_FUELTANK[0] = 'A00M'
+	ENGINE_REFUEL[0] = 'A013'
+	ENGINE_SPEED[0] = 'A00S'
+	ENGINE_USAGE[0] = 'A00Z'
+	// Steam
+	ENGINE_NAME[1] = "Steam"
+	ENGINE_LIST[1] = 'I006'
+	ENGINE_FUELTANK[1] = 'A00N'
+	ENGINE_REFUEL[1] = 'A01O'
+	ENGINE_SPEED[1] = 'A00T'
+	ENGINE_USAGE[1] = 'A00Z'
+	// Diesel
+	ENGINE_NAME[2] = "Diesel"
+	ENGINE_LIST[2] = 'I007'
+	ENGINE_FUELTANK[2] = 'A00O'
+	ENGINE_REFUEL[2] = 'A01P'
+	ENGINE_SPEED[2] = 'A00U'
+	ENGINE_USAGE[2] = 'A010'
+	// Gas
+	ENGINE_NAME[3] = "Gas"
+	ENGINE_LIST[3] = 'I008'
+	ENGINE_FUELTANK[3] = 'A00O'
+	ENGINE_REFUEL[3] = 'A01Q'
+	ENGINE_SPEED[3] = 'A00V'
+	ENGINE_USAGE[3] = 'A00Z'
+	// Electric
+	ENGINE_NAME[4] = "Electric"
+	ENGINE_LIST[4] = 'I009'
+	ENGINE_FUELTANK[4] = 'A00P'
+	ENGINE_REFUEL[4] = 'A01R'
+	ENGINE_SPEED[4] = 'A00W'
+	ENGINE_USAGE[4] = 'A011'
+	// Hybrid
+	ENGINE_NAME[5] = "Hybrid"
+	ENGINE_LIST[5] = 'I00A'
+	ENGINE_FUELTANK[5] = 'A00Q'
+	ENGINE_REFUEL[5] = 'A01S'
+	ENGINE_SPEED[5] = 'A00X'
+	ENGINE_USAGE[5] = 'A011'
+	// Reactor
+	ENGINE_NAME[6] = "Reactor"
+	ENGINE_LIST[6] = 'I00B'
+	ENGINE_FUELTANK[6] = 'A00R'
+	ENGINE_REFUEL[6] = 'A01S'
+	ENGINE_SPEED[6] = 'A00Y'
+	ENGINE_USAGE[6] = 'A012'
+	
+	/////////////
+	// CHASSIS //
+	/////////////
+	
 	// Wooden
-	MECH_CHASSIS_List[0] = 'I00I'
-	MECH_CHASSIS_Armour[0] = 'A01B'
-	MECH_CHASSIS_Health[0] = 'A01I'
-	MECH_CHASSIS_Speed[0] = 'A014'
+	CHASSIS_NAME[0] = "Wooden"
+	CHASSIS_LIST[0] = 'I00I'
+	CHASSIS_ARMOUR[0] = 'A01B'
+	CHASSIS_HEALTH[0] = 'A01I'
+	CHASSIS_SPEED[0] = 'A014'
 	// Copper
-	MECH_CHASSIS_List[1] = 'I00J'
-	MECH_CHASSIS_Armour[1] = 'A01C'
-	MECH_CHASSIS_Health[1] = 'A01J'
-	MECH_CHASSIS_Speed[1] = 'A015'
+	CHASSIS_NAME[1] = "Copper"
+	CHASSIS_LIST[1] = 'I00J'
+	CHASSIS_ARMOUR[1] = 'A01C'
+	CHASSIS_HEALTH[1] = 'A01J'
+	CHASSIS_SPEED[1] = 'A015'
 	// Iron
-	MECH_CHASSIS_List[2] = 'I00K'
-	MECH_CHASSIS_Armour[2] = 'A01D'
-	MECH_CHASSIS_Health[2] = 'A01K'
-	MECH_CHASSIS_Speed[2] = 'A016'
+	CHASSIS_NAME[2] = "Iron"
+	CHASSIS_LIST[2] = 'I00K'
+	CHASSIS_ARMOUR[2] = 'A01D'
+	CHASSIS_HEALTH[2] = 'A01K'
+	CHASSIS_SPEED[2] = 'A016'
 	// Steel
-	MECH_CHASSIS_List[3] = 'I00L'
-	MECH_CHASSIS_Armour[3] = 'A01E'
-	MECH_CHASSIS_Health[3] = 'A01K'
-	MECH_CHASSIS_Speed[3] = 'A017'
+	CHASSIS_NAME[3] = "Steel"
+	CHASSIS_LIST[3] = 'I00L'
+	CHASSIS_ARMOUR[3] = 'A01E'
+	CHASSIS_HEALTH[3] = 'A01K'
+	CHASSIS_SPEED[3] = 'A017'
 	// Aluminium
-	MECH_CHASSIS_List[4] = 'I00M'
-	MECH_CHASSIS_Armour[4] = 'A01F'
-	MECH_CHASSIS_Health[4] = 'A01L'
-	MECH_CHASSIS_Speed[4] = 'A015'
+	CHASSIS_NAME[4] = "Aluminium"
+	CHASSIS_LIST[4] = 'I00M'
+	CHASSIS_ARMOUR[4] = 'A01F'
+	CHASSIS_HEALTH[4] = 'A01L'
+	CHASSIS_SPEED[4] = 'A015'
 	// Titanium
-	MECH_CHASSIS_List[5] = 'I00N'
-	MECH_CHASSIS_Armour[5] = 'A01G'
-	MECH_CHASSIS_Health[5] = 'A01M'
-	MECH_CHASSIS_Speed[5] = 'A018'
+	CHASSIS_NAME[5] = "Titanium"
+	CHASSIS_LIST[5] = 'I00N'
+	CHASSIS_ARMOUR[5] = 'A01G'
+	CHASSIS_HEALTH[5] = 'A01M'
+	CHASSIS_SPEED[5] = 'A018'
 	// Fibreglass
-	MECH_CHASSIS_List[6] = 'I00O'
-	MECH_CHASSIS_Armour[6] = 'A01D'
-	MECH_CHASSIS_Health[6] = 'A01L'
-	MECH_CHASSIS_Speed[6] = 'A019'
+	CHASSIS_NAME[6] = "Fibreglass"
+	CHASSIS_LIST[6] = 'I00O'
+	CHASSIS_ARMOUR[6] = 'A01D'
+	CHASSIS_HEALTH[6] = 'A01L'
+	CHASSIS_SPEED[6] = 'A019'
 	// Reinforced
-	MECH_CHASSIS_List[7] = 'I00P'
-	MECH_CHASSIS_Armour[7] = 'A01H'
-	MECH_CHASSIS_Health[7] = 'A01N'
-	MECH_CHASSIS_Speed[7] = 'A01A'
+	CHASSIS_NAME[7] = "Reinforced"
+	CHASSIS_LIST[7] = 'I00P'
+	CHASSIS_ARMOUR[7] = 'A01H'
+	CHASSIS_HEALTH[7] = 'A01N'
+	CHASSIS_SPEED[7] = 'A01A'
 }
 
 //===========================================================================
