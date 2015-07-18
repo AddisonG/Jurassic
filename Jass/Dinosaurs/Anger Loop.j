@@ -1,7 +1,7 @@
 void Anger_Loop_Actions() {
 	DINO_ANGER++
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, \
-		"The dinosaurs have grown more ferocious... [" + I2S(DINO_ANGER) + "]")
+		"The dinosaurs have grown more ferocious... (Ferocity " + I2S(DINO_ANGER) + ")")
 }
 
 //===========================================================================

@@ -1,7 +1,7 @@
 void Level_Loop_Actions() {
 	DINO_LEVEL++
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, \
-		"Larger dinosaurs are approaching... [" + I2S(DINO_LEVEL) + "]")
+		"Larger dinosaurs are approaching... (Level " + I2S(DINO_LEVEL) + ")")
 }
 
 //===========================================================================

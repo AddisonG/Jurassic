@@ -31,18 +31,18 @@ void Game_Start_Actions() {
 	SPAWN_MIN_DIST = 1000 - 150 * DIFFICULTY
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, "Game Difficulty: " + I2S(DIFFICULTY + 1) + "/" + I2S(difficulty_num))
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, "Time to Survive: " + I2S(30 + 10 * DIFFICULTY) + " minutes")
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, "Period of Grace: " + I2S(60 - 15 * DIFFICULTY) + " seconds")
+	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, "Period of Grace: " + I2S(60 - 12 * DIFFICULTY) + " seconds")
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, "Min Dino Spawn Distance: " + R2S(SPAWN_MIN_DIST) + " units")
 	
 	// Start the timer to mark the end of the game
 	TimerStart(END_TIMER, 1800 + 600 * DIFFICULTY, false, null)
 	timerdialog timerdiag = CreateTimerDialog(END_TIMER)
-	TimerDialogSetTitle(timerdiag, "TRIGSTR_550")
+	TimerDialogSetTitle(timerdiag, "Time until rescue")
 	TimerDialogDisplay(timerdiag, true)
 	timerdiag = null
 	
 	// Start the timer t delay dino spawning (period of grace)
-	TimerStart(START_TIMER, 60 - 15 * DIFFICULTY, false, null)
+	TimerStart(START_TIMER, 60 - 12 * DIFFICULTY, false, null)
 	
 	// Destroy this trigger
 	DestroyTrigger(GetTriggeringTrigger())

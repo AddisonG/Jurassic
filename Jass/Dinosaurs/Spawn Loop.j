@@ -64,6 +64,7 @@ void Verify_Point() {
 }
 
 void Spawn_Dinosaur() {
+	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 1, "SPAWN!")
 	// Don't merge this line
 	location survivor_location = GetUnitLoc(GetEnumUnit())
 	

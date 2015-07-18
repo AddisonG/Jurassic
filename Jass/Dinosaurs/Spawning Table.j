@@ -4,7 +4,7 @@ The values in the first column (0) MUST be at least 100,
 or there will be bad times, as I don't think I added any failsafes.
 */
 
-nothing Setup_Spawning_Table() {
+void Setup_Spawning_Table() {
 	// LEVEL 1
 	integer VAL = 0
 	integer KEY = 1
@@ -59,6 +59,6 @@ nothing Setup_Spawning_Table() {
 }
 
 //===========================================================================
-nothing InitTrig_Spawning_Table() {
+void InitTrig_Spawning_Table() {
 	TriggerAddAction(CreateTrigger(), function Setup_Spawning_Table)
 }

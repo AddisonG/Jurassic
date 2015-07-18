@@ -11,7 +11,7 @@ globals
 	timer END_TIMER = CreateTimer()
 	timer SPAWN_TIMER = CreateTimer()
 	
-	hashtable array DINOSAURS
+	hashtable array DINOSAURS[10]
 	location MAP_CENTER
 	
 	int DIFFICULTY
