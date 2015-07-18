@@ -4,11 +4,13 @@ void Game_Start_Actions() {
 	while (i <= difficulty_num) {
 		if (GetClickedButton() == DIFFICULTY_BUTTONS[i]) {
 			DIFFICULTY = i
-			break
+			DIFFICULTY_BUTTONS[i] = null
 		}
 		i++
 	}
 	
+	DialogDestroy(DIFFICULTY_MENU)
+	DIFFICULTY_MENU = null
 	PauseGame(false)
 	
 	// Spawn and destroy a helicopter above the survivors. Pretty immersive, huh?

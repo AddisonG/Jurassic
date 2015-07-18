@@ -1,24 +1,29 @@
+include "cj_types.j"
+include "cj_typesEx.j"
+include "cj_types_priv.j"
+include "cj_typesEx_priv.j"
+
 globals
 	force PLAYERS = CreateForce()
-	group SURVIVORS
+	group SURVIVORS = CreateGroup()
 	rect WHOLE_MAP
-	timer START_TIMER
-	timer END_TIMER
-	timer SPAWN_TIMER
+	timer START_TIMER = CreateTimer()
+	timer END_TIMER = CreateTimer()
+	timer SPAWN_TIMER = CreateTimer()
 	
 	hashtable array DINOSAURS
 	location MAP_CENTER
 	
 	int DIFFICULTY
-	timer ANGER_TIMER
-	timer LEVEL_TIMER
+	timer ANGER_TIMER = CreateTimer()
+	timer LEVEL_TIMER = CreateTimer()
 	int DINO_ANGER
 	int DINO_LEVEL
 	
 	real SPAWN_MAX_DIST
 	real SPAWN_MIN_DIST
 	
-	dialog DIFFICULTY_MENU
+	dialog DIFFICULTY_MENU = DialogCreate()
 	button array DIFFICULTY_BUTTONS
 	
 	hashtable FOGMODS = InitHashtable()
@@ -50,6 +55,9 @@ void Player_Setup() {
 }
 
 void Init_Actions() {
+	StopMusic(false)
+	PauseGame(true)
+	
 	// Create groups
 	boolexpr conditions = Condition(function Player_Definition)
 	ForceEnumPlayers(PLAYERS, conditions)
@@ -66,13 +74,23 @@ void Init_Actions() {
 	// Set up each player
 	ForForce(PLAYERS, function Player_Setup)
 	
-	// Prepare the menu
-	//geaghaeghahrh
+	// Only display for 1 second, since the game is paused
+	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 1, "Red is deciding on difficulty...")
+	
+	// Display difficulty menu to first player
+	DialogSetMessage(DIFFICULTY_MENU, "- |c00ff0000Select Difficulty|r -")
+	DIFFICULTY_BUTTONS[0] = DialogAddButton(DIFFICULTY_MENU, "|c0066ff33EASY|r", 0)
+	DIFFICULTY_BUTTONS[1] = DialogAddButton(DIFFICULTY_MENU, "|c00ffff00MEDIUM|r", 0)
+	DIFFICULTY_BUTTONS[2] = DialogAddButton(DIFFICULTY_MENU, "|c00ff9900HARD|r", 0)
+	DIFFICULTY_BUTTONS[3] = DialogAddButton(DIFFICULTY_MENU, "|c00ff0000JURASSIC|r", 0)
+	DialogDisplay(Player(0), DIFFICULTY_MENU, true)
 	
 	DestroyTrigger(GetTriggeringTrigger())
 }
 
 //===========================================================================
 void InitTrig_Init() {
-	TriggerAddAction(CreateTrigger(), function Init_Actions)
+	trigger t = CreateTrigger()
+	TriggerAddAction(t, function Init_Actions)
+	TriggerRegisterTimerEvent(t, 0, false)
 }
