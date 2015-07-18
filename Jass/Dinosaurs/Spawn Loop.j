@@ -40,19 +40,19 @@ endglobals
 
 // Returns false if the point is closer than MinDistance to the point.
 // Math is: sqrt((player_x - spawn_x)^2 + (player_y - spawn_y)^2).
-boolean Proximity_Check(location player_point) {
-	real x_diff_sqrd = Pow(GetLocationX(spawn_point) - GetLocationX(player_point), 2)
-	real y_diff_sqrd = Pow(GetLocationY(spawn_point) - GetLocationY(player_point), 2)
+bool Proximity_Check(location survivor_location) {
+	real x_diff_sqrd = Pow(GetLocationX(spawn_point) - GetLocationX(survivor_location), 2)
+	real y_diff_sqrd = Pow(GetLocationY(spawn_point) - GetLocationY(survivor_location), 2)
 	return SquareRoot(x_diff_sqrd + y_diff_sqrd) >= SPAWN_MIN_DIST
 }
 
 // As this is for execution in a ForGroup loop, no parameters or retval is allowed.
 void Verify_Point() {
-	location player_point = GetUnitLoc(GetEnumUnit())
-	if (!Proximity_Check(player_point)) {
+	location survivor_location = GetUnitLoc(GetEnumUnit())
+	if (spawn_point != null && !Proximity_Check(survivor_location)) {
 		// Point was too close to a survivor. Increase MaxDistance, to approach 5'000
 		SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
-		RemoveLocation(player_point)
+		
 		// This point has been proved invalid. Free it.
 		RemoveLocation(spawn_point)
 		spawn_point = null
@@ -60,26 +60,36 @@ void Verify_Point() {
 		// We have failed, while inside of a ForGroup().
 		// By setting the global variable 'spawn_point' to null, we can let our caller know we failed.
 	}
-	player_point = null
+	survivor_location = null
 }
 
-// Note that SPAWN_Survivor is set before this method is called.
-void Spawn_Actions() {
+void Spawn_Dinosaur() {
+	// Don't merge this line
+	location survivor_location = GetUnitLoc(GetEnumUnit())
+	
+	// MaxDistance is set to the MinDistance + 3000. This makes a donut shape
+	// in which dinosaurs will spawn. MinDistance is static, and is set according
+	// to difficulty. MaxDistance increases slightly every time spawning a
+	// dinosaur fails. This is to prevent lag if there are very few valid
+	// spawning locations, such as at the very corner of the map.
+	SPAWN_MAX_DIST = SPAWN_MIN_DIST + 3000
 	loop
-		spawn_point = PolarProjectionBJ(udg_SPAWN_Survivor, GetRandomReal(SPAWN_MIN_DIST, SPAWN_MAX_DIST), GetRandomReal(0, 360))
-		// Loop/retry until point is pathable.
-		boolean pathable = IsTerrainPathable(GetLocationX(spawn_point), GetLocationY(spawn_point), PATHING_TYPE_WALKABILITY)
+		// Get a random point.
+		spawn_point = PolarProjectionBJ(survivor_location, \
+			GetRandomReal(SPAWN_MIN_DIST, SPAWN_MAX_DIST), GetRandomReal(0, 360))
+		
+		// Ensure it is pathable, and inside map
+		//bool pathable = IsTerrainPathable(GetLocationX(spawn_point), GetLocationY(spawn_point), PATHING_TYPE_WALKABILITY)
+		//pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(spawn_point), GetLocationY(spawn_point))
+		
 		// Ensures point chosen is not closer than (SPAWN_MinDistance) units from any survivor.
 		ForGroup(SURVIVORS, function Verify_Point)
-		boolean failed = (spawn_point == null)
+		
+		exitwhen spawn_point != null // && pathable
+		
 		// MaxDistance approaches 5'000, to increase chances of point being pathable
 		SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
 	endloop
-	
-	// Ensures point chosen is within playable map bounds. PROBABLY DON'T NEED THIS ANYMORE, BECAUSE OF WALKABILITY CHECK???
-//	if (RectContainsCoords(WHOLE_MAP, GetLocationX(spawn_point), GetLocationY(spawn_point))) {
-//		set SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
-//	}
 	
 	// Found a point to spawn a dinosaur at. Now to decide which one.
 	
@@ -100,13 +110,23 @@ void Spawn_Actions() {
 	// The dino_type has been decided on, as well as the spawn location. Spawn.
 	CreateUnitAtLoc(Player(11), LoadInteger(DINOSAURS[DINO_LEVEL], i, 1), spawn_point, bj_UNIT_FACING)
 	
+	RemoveLocation(survivor_location)
+	RemoveLocation(spawn_point)
+	survivor_location = null
 	spawn_point = null
 }
 
+void Spawn_Loop_Actions() {
+	// Run the Spawn_Dinosaur function for every survivor
+	ForGroup(SURVIVORS, function Spawn_Dinosaur)
+}
+
 //===========================================================================
-void InitTrig_Spawn() {
-	// Don't rename this trigger
-	gg_trg_Spawn = CreateTrigger()
-	DisableTrigger(gg_trg_Spawn)
-	TriggerAddAction(gg_trg_Spawn, function Spawn_Actions)
+void InitTrig_Spawn_Loop() {
+	// I am not using a local var, as this trigger is referenced by Begin_Spawn
+	gg_trg_Spawn_Loop = CreateTrigger()
+	// Initially disabled. Enabled by Begin_Spawn.
+	DisableTrigger(gg_trg_Spawn_Loop)
+	TriggerRegisterTimerEvent(gg_trg_Spawn_Loop, 5, true)
+	TriggerAddAction(gg_trg_Spawn_Loop, function Spawn_Loop_Actions)
 }

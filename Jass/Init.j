@@ -1,10 +1,4 @@
-include "cj_types.j"
-include "cj_typesEx.j"
-include "cj_types_priv.j"
-include "cj_typesEx_priv.j"
-
 globals
-	// Constants????
 	force PLAYERS = CreateForce()
 	group SURVIVORS
 	rect WHOLE_MAP
@@ -12,22 +6,22 @@ globals
 	timer END_TIMER
 	timer SPAWN_TIMER
 	
-	// Constants
 	hashtable array DINOSAURS
 	location MAP_CENTER
 	
-	// Variables
 	int DIFFICULTY
 	timer ANGER_TIMER
 	timer LEVEL_TIMER
-	int DINO_ANGER = 0
-	int DINO_LEVEL = 0
+	int DINO_ANGER
+	int DINO_LEVEL
 	
 	real SPAWN_MAX_DIST
 	real SPAWN_MIN_DIST
 	
 	dialog DIFFICULTY_MENU
 	button array DIFFICULTY_BUTTONS
+	
+	hashtable FOGMODS = InitHashtable()
 endglobals
 
 bool Player_Definition() {
@@ -55,15 +49,16 @@ void Player_Setup() {
 	RemoveLocation(spawnpoint)
 }
 
-void Init() {
+void Init_Actions() {
 	// Create groups
 	boolexpr conditions = Condition(function Player_Definition)
 	ForceEnumPlayers(PLAYERS, conditions)
 	DestroyBoolExpr(conditions)
+	conditions = null
 	
 	// Define globals
 	WHOLE_MAP = bj_mapInitialPlayableArea
-	MAP_CENTER = Location(GetRectCenterX(bj_mapInitialPlayableArea), GetRectCenterY(bj_mapInitialPlayableArea))
+	MAP_CENTER = Location(GetRectCenterX(WHOLE_MAP), GetRectCenterY(WHOLE_MAP))
 	
 	// Set up the dinosaurs (player 12 - brown) to give bounty
 	SetPlayerState(Player(11), PLAYER_STATE_GIVES_BOUNTY, 1)
@@ -79,5 +74,5 @@ void Init() {
 
 //===========================================================================
 void InitTrig_Init() {
-	TriggerAddAction(CreateTrigger(), function Init)
+	TriggerAddAction(CreateTrigger(), function Init_Actions)
 }

@@ -1,4 +1,4 @@
-void Trig_Game_Start_Actions() {
+void Game_Start_Actions() {
 	int difficulty_num = 4 // Number of choices available
 	int i = 0
 	while (i <= difficulty_num) {
@@ -50,5 +50,5 @@ void Trig_Game_Start_Actions() {
 void InitTrig_Game_Start() {
 	trigger t = CreateTrigger()
 	TriggerRegisterDialogEvent(t, DIFFICULTY_MENU)
-	TriggerAddAction(t, function Trig_Game_Start_Actions)
+	TriggerAddAction(t, function Game_Start_Actions)
 }

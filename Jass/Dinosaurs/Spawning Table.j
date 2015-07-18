@@ -17,7 +17,7 @@ nothing Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd0_1') // Stegasaurus
 	SaveInteger(temp, 2, KEY, 'd0_2') // Bat
 	SaveInteger(temp, 3, KEY, 'd0_3') // Flies
-	udg_SPAWN_Table[0] = temp
+	DINOSAURS[0] = temp
 	
 	// LEVEL 2
 	temp = InitHashtable()
@@ -29,7 +29,7 @@ nothing Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd1_1') // Triceratops
 	SaveInteger(temp, 2, KEY, 'd1_2') // Vampire Bat
 	SaveInteger(temp, 3, KEY, 'd1_3') // Fly Swarm
-	udg_SPAWN_Table[1] = temp
+	DINOSAURS[1] = temp
 	
 	// LEVEL 3
 	temp = InitHashtable()
@@ -41,7 +41,7 @@ nothing Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd2_1') // Armoured Triceratops
 	SaveInteger(temp, 2, KEY, 'd2_2') // Archaeopteryx
 	SaveInteger(temp, 3, KEY, 'd2_3') // Flesh Flies
-	udg_SPAWN_Table[2] = temp
+	DINOSAURS[2] = temp
 	
 	// LEVEL 4
 	temp = InitHashtable()
@@ -53,7 +53,7 @@ nothing Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd3_1') // Wooly Rhino
 	SaveInteger(temp, 2, KEY, 'd3_2') // Ancient Archaeopteryx
 	SaveInteger(temp, 3, KEY, 'd3_3') // Giant Hornet
-	udg_SPAWN_Table[3] = temp
+	DINOSAURS[3] = temp
 	
 	temp = null
 }

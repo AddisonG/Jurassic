@@ -11,7 +11,7 @@ bool Scout_Tower_Stop_Conditions() {
 void Scout_Tower_Stop_Actions() {
 	int i = 0
 	while (i <= 10) {
-		DestroyFogModifier(LoadFogModifierHandle(udg_VIS_Group, GetHandleId(GetTriggerUnit()), i))
+		DestroyFogModifier(LoadFogModifierHandle(FOGMODS, GetHandleId(GetTriggerUnit()), i))
 		i++;
 	}
 }

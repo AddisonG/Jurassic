@@ -19,7 +19,7 @@ void Scout_Tower_Actions() {
 		int j = 0
 		while (j <= 10) { // 0 to 10
 			// Remove old fogmod
-			DestroyFogModifier(LoadFogModifierHandle(udg_VIS_Group, GetHandleId(triggering_unit), j))
+			DestroyFogModifier(LoadFogModifierHandle(FOGMODS, GetHandleId(triggering_unit), j))
 			// Set location for new fogmod at 80 * j units in front of the unit.
 			// There are 11 modifiers. Thus, the middle of the furthest point is 800 distance away.
 			vis_location = PolarProjectionBJ(GetUnitLoc(triggering_unit), 80 * j, GetUnitFacing(triggering_unit))
@@ -28,7 +28,7 @@ void Scout_Tower_Actions() {
 			fogmod = CreateFogModifierRadiusLoc(GetOwningPlayer(triggering_unit), FOG_OF_WAR_VISIBLE, vis_location, 275 + j * 15, true, false)
 			FogModifierStart(fogmod)
 			// Save the fog modifier, so it can be removed later.
-			SaveFogModifierHandle(udg_VIS_Group, GetHandleId(triggering_unit), j, fogmod)
+			SaveFogModifierHandle(FOGMODS, GetHandleId(triggering_unit), j, fogmod)
 			
 			RemoveLocation(vis_location)
 			j++
@@ -43,7 +43,6 @@ void Scout_Tower_Actions() {
 //===========================================================================
 void InitTrig_Scout_Tower() {
 	trigger t = CreateTrigger()
-	udg_VIS_Group = InitHashtable()
 	// Upon a unit's right click action, or construction finished.
 	TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
 	TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_CONSTRUCT_FINISH)

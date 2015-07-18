@@ -1,41 +1,6 @@
 globals
-integer udg_VIS_Count=0
-hashtable udg_VIS_Group=null
-dialog udg_MENU_Difficulty_Menu=null
-location udg_TEMP_Point_1=null
-button array udg_MENU_Options
-real udg_GAME_Difficulty=0
-timer udg_GAME_Countdown=null
-timer udg_GAME_SpawnDelay=null
-timer udg_SPAWN_Level_Timer=null
-location udg_TEMP_Point_2=null
 group udg_GAME_Survivors=null
-integer udg_TEMP_Integer_1=0
-real udg_TEMP_Real=0
-force udg_GAME_Players=null
-integer array udg_SPAWN_Unit
-location udg_SPAWN_Point=null
-real udg_SPAWN_MaxDistance=0
-location udg_SPAWN_Survivor=null
-real udg_SPAWN_MinDistance=0
-location udg_GAME_Center=null
-rect udg_GAME_Map=null
 force udg_TEMP_Player_Group=null
-timer udg_SPAWN_Anger_Timer=null
-hashtable array udg_SPAWN_Table
-rect udg_TEMP_Region=null
-integer array udg_MECH_ENGINE_List
-integer array udg_MECH_CHASSIS_List
-integer array udg_MECH_ENGINE_Speed
-integer array udg_MECH_ENGINE_Usage
-integer array udg_MECH_ENGINE_FuelTank
-integer array udg_MECH_ENGINE_Refuel
-integer array udg_MECH_CHASSIS_Armour
-integer array udg_MECH_CHASSIS_Health
-integer array udg_MECH_CHASSIS_Speed
-integer udg_TEMP_Integer_2=0
-integer udg_SPAWN_Anger=0
-integer udg_SPAWN_Level=0
 timer udg_TIP_Timer=null
 force udg_TIP_Group=null
 string array udg_TIP_Text
@@ -81,7 +46,6 @@ trigger gg_trg_Begin_Spawn=null
 trigger gg_trg_Anger_Loop=null
 trigger gg_trg_Level_Loop=null
 trigger gg_trg_Spawn_Loop=null
-trigger gg_trg_Spawn=null
 trigger gg_trg_Item_Scatter=null
 trigger gg_trg_Spawning_Table=null
 trigger gg_trg_Init=null
@@ -93,36 +57,13 @@ trigger gg_trg_Tent_Init=null
 trigger gg_trg_MineSite_Blight=null
 trigger gg_trg_DMineSite_Blight=null
 trigger gg_trg_MineSite_Stop=null
-trigger gg_trg_Setup_Mechanic=null
+trigger gg_trg_Mechanic_Init=null
 trigger gg_trg_Mechanic_Recipie=null
 trigger gg_trg_Pistol=null
 trigger gg_trg_Tip_Disable=null
 trigger gg_trg_Tip_Enable=null
 trigger gg_trg_Tip_Init=null
 trigger gg_trg_Tip_Timer=null
-trigger gg_trg_GUI_Mechanic_Recipie=null
-trigger gg_trg_GUI_Setup_Mechanic=null
-trigger gg_trg_GUI_Menu=null
-trigger gg_trg_GUI_MineSite_Stop=null
-trigger gg_trg_GUI_DMineSite_Blight=null
-trigger gg_trg_GUI_MineSite_Blight=null
-trigger gg_trg_GUI_Item_Scatter=null
-trigger gg_trg_GUI_EW_Mountain_Cave=null
-trigger gg_trg_GUI_WE_Mountain_Cave=null
-trigger gg_trg_GUI_Survivor_Death=null
-trigger gg_trg_GUI_Game_Start=null
-trigger gg_trg_GUI_Ping_Base=null
-trigger gg_trg_GUI_Spawning_Table=null
-trigger gg_trg_GUI_Init=null
-trigger gg_trg_GUI_Spawn=null
-trigger gg_trg_GUI_Spawn_Loop=null
-trigger gg_trg_GUI_Begin_Spawn=null
-trigger gg_trg_GUI_Scout_Tower_Stop=null
-trigger gg_trg_GUI_Scout_Tower=null
-trigger gg_trg_GUI_Tent_Init=null
-trigger gg_trg_GUI_Part_Share=null
-trigger gg_trg_GUI_Full_Share=null
-trigger gg_trg_GUI_Unshare=null
 unit gg_unit_d0_1_0031=null
 unit gg_unit_d0_2_0026=null
 unit gg_unit_d0_0_0024=null
@@ -143,12 +84,13 @@ location MAP_CENTER
 integer DIFFICULTY
 timer ANGER_TIMER
 timer LEVEL_TIMER
-integer DINO_ANGER=0
-integer DINO_LEVEL=0
+integer DINO_ANGER
+integer DINO_LEVEL
 real SPAWN_MAX_DIST
 real SPAWN_MIN_DIST
 dialog DIFFICULTY_MENU
 button array DIFFICULTY_BUTTONS
+hashtable FOGMODS=InitHashtable()
 integer ENGINE_NUM=7
 string array ENGINE_NAME
 integer array ENGINE_LIST
@@ -175,27 +117,11 @@ integer VEHICLE_COBRA=0x6E303039
 integer VEHICLE_TRANSPORT=0x6E303035
 integer VEHICLE_AAHELI=0x6E303042
 
-
 endglobals
 function InitGlobals takes nothing returns nothing
 local integer i=0
-set udg_VIS_Count=0
-set udg_MENU_Difficulty_Menu=DialogCreate()
-set udg_GAME_Difficulty=0
-set udg_GAME_Countdown=CreateTimer()
-set udg_GAME_SpawnDelay=CreateTimer()
-set udg_SPAWN_Level_Timer=CreateTimer()
 set udg_GAME_Survivors=CreateGroup()
-set udg_TEMP_Integer_1=0
-set udg_TEMP_Real=0
-set udg_GAME_Players=CreateForce()
-set udg_SPAWN_MaxDistance=0
-set udg_SPAWN_MinDistance=0
 set udg_TEMP_Player_Group=CreateForce()
-set udg_SPAWN_Anger_Timer=CreateTimer()
-set udg_TEMP_Integer_2=0
-set udg_SPAWN_Anger=0
-set udg_SPAWN_Level=0
 set udg_TIP_Timer=CreateTimer()
 set udg_TIP_Group=CreateForce()
 set i=0
@@ -797,46 +723,29 @@ local trigger t=CreateTrigger()
 call TriggerRegisterTimerExpireEvent(t,LEVEL_TIMER)
 call TriggerAddAction(t,function Level_Loop_Actions)
 endfunction
-function Spawn_Dino takes nothing returns nothing
-local location spawn_location=GetUnitLoc(GetEnumUnit())
-set SPAWN_MAX_DIST=SPAWN_MIN_DIST+3000
-call TriggerExecute(gg_trg_Spawn)
-set spawn_location=null
-endfunction
-function Spawn_Loop_Actions takes nothing returns nothing
-call ForGroup(SURVIVORS,function Spawn_Dino)
-endfunction
-function InitTrig_Spawn_Loop takes nothing returns nothing
-set gg_trg_Spawn_Loop=CreateTrigger()
-call DisableTrigger(gg_trg_Spawn_Loop)
-call TriggerRegisterTimerEvent(gg_trg_Spawn_Loop,5,true)
-call TriggerAddAction(gg_trg_Spawn_Loop,function Spawn_Loop_Actions)
-endfunction
-function Proximity_Check takes location player_point returns boolean
-local real x_diff_sqrd=Pow(GetLocationX(spawn_point)-GetLocationX(player_point),2)
-local real y_diff_sqrd=Pow(GetLocationY(spawn_point)-GetLocationY(player_point),2)
+function Proximity_Check takes location survivor_location returns boolean
+local real x_diff_sqrd=Pow(GetLocationX(spawn_point)-GetLocationX(survivor_location),2)
+local real y_diff_sqrd=Pow(GetLocationY(spawn_point)-GetLocationY(survivor_location),2)
 return         SquareRoot(x_diff_sqrd+y_diff_sqrd)>=SPAWN_MIN_DIST
 endfunction
 function Verify_Point takes nothing returns nothing
-local location player_point=GetUnitLoc(GetEnumUnit())
-if            ( not Proximity_Check(player_point)) then
+local location survivor_location=GetUnitLoc(GetEnumUnit())
+if            (spawn_point!=null and  not Proximity_Check(survivor_location)) then
 set SPAWN_MAX_DIST=SPAWN_MAX_DIST*0.96+200
-call RemoveLocation(player_point)
 call RemoveLocation(spawn_point)
 set spawn_point=null
 endif
-set player_point=null
+set survivor_location=null
 endfunction
-function Spawn_Actions takes nothing returns nothing
-local boolean pathable
-local boolean failed
+function Spawn_Dinosaur takes nothing returns nothing
+local location survivor_location=GetUnitLoc(GetEnumUnit())
 local integer dino_type=GetRandomInt(0,100)
 local integer i=0
+set SPAWN_MAX_DIST=SPAWN_MIN_DIST+3000
 loop
-set spawn_point=PolarProjectionBJ(udg_SPAWN_Survivor,GetRandomReal(SPAWN_MIN_DIST,SPAWN_MAX_DIST),GetRandomReal(0,360))
-set pathable=IsTerrainPathable(GetLocationX(spawn_point),GetLocationY(spawn_point),PATHING_TYPE_WALKABILITY)
+set spawn_point=PolarProjectionBJ(survivor_location,GetRandomReal(SPAWN_MIN_DIST,SPAWN_MAX_DIST),GetRandomReal(0,360))
 call ForGroup(SURVIVORS,function Verify_Point)
-set failed=(spawn_point==null)
+exitwhen       spawn_point!=null
 set SPAWN_MAX_DIST=SPAWN_MAX_DIST*0.96+200
 endloop
 loop
@@ -845,19 +754,26 @@ set dino_type=dino_type-(LoadInteger(DINOSAURS[DINO_LEVEL],i,0))
 set i=i+1
 endloop
 call CreateUnitAtLoc(Player(11),LoadInteger(DINOSAURS[DINO_LEVEL],i,1),spawn_point,bj_UNIT_FACING)
+call RemoveLocation(survivor_location)
+call RemoveLocation(spawn_point)
+set survivor_location=null
 set spawn_point=null
 endfunction
-function InitTrig_Spawn takes nothing returns nothing
-set gg_trg_Spawn=CreateTrigger()
-call DisableTrigger(gg_trg_Spawn)
-call TriggerAddAction(gg_trg_Spawn,function Spawn_Actions)
+function Spawn_Loop_Actions takes nothing returns nothing
+call ForGroup(SURVIVORS,function Spawn_Dinosaur)
+endfunction
+function InitTrig_Spawn_Loop takes nothing returns nothing
+set gg_trg_Spawn_Loop=CreateTrigger()
+call DisableTrigger(gg_trg_Spawn_Loop)
+call TriggerRegisterTimerEvent(gg_trg_Spawn_Loop,5,true)
+call TriggerAddAction(gg_trg_Spawn_Loop,function Spawn_Loop_Actions)
 endfunction
 function Item_Scatter_Actions takes nothing returns nothing
 local location temp
 local integer i=0
 loop
 exitwhen  not(i<100)
-set temp=GetRandomLocInRect(udg_GAME_Map)
+set temp=GetRandomLocInRect(WHOLE_MAP)
 call CreateItemLoc(0x49303031,temp)
 call RemoveLocation(temp)
 set i=i+1
@@ -865,7 +781,7 @@ endloop
 set i=0
 loop
 exitwhen  not(i<100)
-set temp=GetRandomLocInRect(udg_GAME_Map)
+set temp=GetRandomLocInRect(WHOLE_MAP)
 call CreateItem(0x49303030,GetLocationX(temp),GetLocationY(temp))
 call RemoveLocation(temp)
 set i=i+1
@@ -890,7 +806,7 @@ call SaveInteger(temp,0,KEY,0x64305F30)
 call SaveInteger(temp,1,KEY,0x64305F31)
 call SaveInteger(temp,2,KEY,0x64305F32)
 call SaveInteger(temp,3,KEY,0x64305F33)
-set udg_SPAWN_Table[0]=temp
+set DINOSAURS[0]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,32)
 call SaveInteger(temp,1,VAL,32)
@@ -900,7 +816,7 @@ call SaveInteger(temp,0,KEY,0x64315F30)
 call SaveInteger(temp,1,KEY,0x64315F31)
 call SaveInteger(temp,2,KEY,0x64315F32)
 call SaveInteger(temp,3,KEY,0x64315F33)
-set udg_SPAWN_Table[1]=temp
+set DINOSAURS[1]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,32)
 call SaveInteger(temp,1,VAL,32)
@@ -910,7 +826,7 @@ call SaveInteger(temp,0,KEY,0x64325F30)
 call SaveInteger(temp,1,KEY,0x64325F31)
 call SaveInteger(temp,2,KEY,0x64325F32)
 call SaveInteger(temp,3,KEY,0x64325F33)
-set udg_SPAWN_Table[2]=temp
+set DINOSAURS[2]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,30)
 call SaveInteger(temp,1,VAL,25)
@@ -920,7 +836,7 @@ call SaveInteger(temp,0,KEY,0x64335F30)
 call SaveInteger(temp,1,KEY,0x64335F31)
 call SaveInteger(temp,2,KEY,0x64335F32)
 call SaveInteger(temp,3,KEY,0x64335F33)
-set udg_SPAWN_Table[3]=temp
+set DINOSAURS[3]=temp
 set temp=null
 endfunction
 function InitTrig_Spawning_Table takes nothing returns nothing
@@ -941,10 +857,11 @@ call SetPlayerStateBJ(GetEnumPlayer(),PLAYER_STATE_RESOURCE_GOLD,1000)
 call SetPlayerStateBJ(GetEnumPlayer(),PLAYER_STATE_RESOURCE_LUMBER,1000)
 call RemoveLocation(spawnpoint)
 endfunction
-function Init takes nothing returns nothing
+function Init_Actions takes nothing returns nothing
 local boolexpr conditions=Condition(function Player_Definition)
 call ForceEnumPlayers(PLAYERS,conditions)
 call DestroyBoolExpr(conditions)
+set conditions=null
 set WHOLE_MAP=bj_mapInitialPlayableArea
 set MAP_CENTER=Location(GetRectCenterX(bj_mapInitialPlayableArea),GetRectCenterY(bj_mapInitialPlayableArea))
 call SetPlayerState(Player(11),PLAYER_STATE_GIVES_BOUNTY,1)
@@ -952,7 +869,7 @@ call ForForce(PLAYERS,function Player_Setup)
 call DestroyTrigger(GetTriggeringTrigger())
 endfunction
 function InitTrig_Init takes nothing returns nothing
-call TriggerAddAction(CreateTrigger(),function Init)
+call TriggerAddAction(CreateTrigger(),function Init_Actions)
 endfunction
 function Menu_Actions takes nothing returns nothing
 call StopMusic(false)
@@ -971,7 +888,7 @@ local trigger t=CreateTrigger()
 call TriggerRegisterTimerEvent(t,0,false)
 call TriggerAddAction(t,function Menu_Actions)
 endfunction
-function Trig_Game_Start_Actions takes nothing returns nothing
+function Game_Start_Actions takes nothing returns nothing
 local integer difficulty_num=4
 local integer i=0
 local location temp
@@ -979,7 +896,7 @@ local unit helicopter
 local timerdialog timerdiag
 loop
 exitwhen  not(i<=difficulty_num)
-if            (GetClickedButton()==udg_MENU_Options[i]) then
+if            (GetClickedButton()==DIFFICULTY_BUTTONS[i]) then
 set DIFFICULTY=i
 exitwhen       true
 endif
@@ -1011,8 +928,8 @@ call DestroyTrigger(GetTriggeringTrigger())
 endfunction
 function InitTrig_Game_Start takes nothing returns nothing
 local trigger t=CreateTrigger()
-call TriggerRegisterDialogEvent(t,udg_MENU_Difficulty_Menu)
-call TriggerAddAction(t,function Trig_Game_Start_Actions)
+call TriggerRegisterDialogEvent(t,DIFFICULTY_MENU)
+call TriggerAddAction(t,function Game_Start_Actions)
 endfunction
 function Scout_Tower_Conditions takes nothing returns boolean
 return         GetUnitTypeId(GetTriggerUnit())==0x68303033
@@ -1028,11 +945,11 @@ exitwhen  not(i<=11)
 call TriggerSleepAction(0.1)
 loop
 exitwhen  not(j<=10)
-call DestroyFogModifier(LoadFogModifierHandle(udg_VIS_Group,GetHandleId(triggering_unit),j))
+call DestroyFogModifier(LoadFogModifierHandle(FOGMODS,GetHandleId(triggering_unit),j))
 set vis_location=PolarProjectionBJ(GetUnitLoc(triggering_unit),80*j,GetUnitFacing(triggering_unit))
 set fogmod=CreateFogModifierRadiusLoc(GetOwningPlayer(triggering_unit),FOG_OF_WAR_VISIBLE,vis_location,275+j*15,true,false)
 call FogModifierStart(fogmod)
-call SaveFogModifierHandle(udg_VIS_Group,GetHandleId(triggering_unit),j,fogmod)
+call SaveFogModifierHandle(FOGMODS,GetHandleId(triggering_unit),j,fogmod)
 call RemoveLocation(vis_location)
 set j=j+1
 endloop
@@ -1044,7 +961,6 @@ set fogmod=null
 endfunction
 function InitTrig_Scout_Tower takes nothing returns nothing
 local trigger t=CreateTrigger()
-set udg_VIS_Group=InitHashtable()
 call TriggerRegisterAnyUnitEventBJ(t,EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER)
 call TriggerRegisterAnyUnitEventBJ(t,EVENT_PLAYER_UNIT_CONSTRUCT_FINISH)
 call TriggerAddCondition(t,Condition(function Scout_Tower_Conditions))
@@ -1061,7 +977,7 @@ function Scout_Tower_Stop_Actions takes nothing returns nothing
 local integer i=0
 loop
 exitwhen  not(i<=10)
-call DestroyFogModifier(LoadFogModifierHandle(udg_VIS_Group,GetHandleId(GetTriggerUnit()),i))
+call DestroyFogModifier(LoadFogModifierHandle(FOGMODS,GetHandleId(GetTriggerUnit()),i))
 set i=i+1
 endloop
 endfunction
@@ -1223,7 +1139,7 @@ set CHASSIS_ARMOUR[7]=0x41303148
 set CHASSIS_HEALTH[7]=0x4130314E
 set CHASSIS_SPEED[7]=0x41303141
 endfunction
-function InitTrig_Setup_Mechanic takes nothing returns nothing
+function InitTrig_Mechanic_Init takes nothing returns nothing
 local trigger t=CreateTrigger()
 call TriggerAddAction(t,function Setup_Mechanic)
 endfunction
@@ -1410,7 +1326,6 @@ call InitTrig_Begin_Spawn()
 call InitTrig_Anger_Loop()
 call InitTrig_Level_Loop()
 call InitTrig_Spawn_Loop()
-call InitTrig_Spawn()
 call InitTrig_Item_Scatter()
 call InitTrig_Spawning_Table()
 call InitTrig_Init()
@@ -1422,7 +1337,7 @@ call InitTrig_Tent_Init()
 call InitTrig_MineSite_Blight()
 call InitTrig_DMineSite_Blight()
 call InitTrig_MineSite_Stop()
-call InitTrig_Setup_Mechanic()
+call InitTrig_Mechanic_Init()
 call InitTrig_Mechanic_Recipie()
 call InitTrig_Pistol()
 call InitTrig_Tip_Disable()
@@ -1433,7 +1348,7 @@ endfunction
 function RunInitializationTriggers takes nothing returns nothing
 call ConditionalTriggerExecute(gg_trg_Spawning_Table)
 call ConditionalTriggerExecute(gg_trg_Init)
-call ConditionalTriggerExecute(gg_trg_Setup_Mechanic)
+call ConditionalTriggerExecute(gg_trg_Mechanic_Init)
 endfunction
 function InitCustomPlayerSlots takes nothing returns nothing
 call SetPlayerStartLocation(Player(0),0)

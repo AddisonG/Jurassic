@@ -4,7 +4,7 @@ void Item_Scatter_Actions() {
 	// Spawn Gold
 	int i = 0
 	while (i < 100) {
-		temp = GetRandomLocInRect(udg_GAME_Map)
+		temp = GetRandomLocInRect(WHOLE_MAP)
 		CreateItemLoc('I001', temp)
 		RemoveLocation(temp)
 		i++
@@ -13,7 +13,7 @@ void Item_Scatter_Actions() {
 	// Spawn lumber
 	i = 0
 	while (i < 100) {
-		temp = GetRandomLocInRect(udg_GAME_Map)
+		temp = GetRandomLocInRect(WHOLE_MAP)
 		CreateItem('I000', GetLocationX(temp), GetLocationY(temp))
 		RemoveLocation(temp)
 		i++
