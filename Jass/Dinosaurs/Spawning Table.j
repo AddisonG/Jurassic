@@ -60,5 +60,7 @@ void Setup_Spawning_Table() {
 
 //===========================================================================
 void InitTrig_Spawning_Table() {
-	TriggerAddAction(CreateTrigger(), function Setup_Spawning_Table)
+	trigger t = CreateTrigger()
+	TriggerAddAction(t, function Setup_Spawning_Table)
+	TriggerRegisterTimerEvent(t, 0, false)
 }

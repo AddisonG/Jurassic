@@ -39,19 +39,22 @@ void Player_Setup() {
 	location spawnpoint = PolarProjectionBJ(MAP_CENTER, GetRandomReal(0, 300), GetRandomReal(0, 360))
 	
 	// Spawn a survivor for the player
-	CreateUnitAtLoc(GetEnumPlayer(), 'h000', spawnpoint, GetRandomReal(0, 360))
-	GroupAddUnit(SURVIVORS, bj_lastCreatedUnit)
+	unit survivor = CreateUnitAtLoc(GetEnumPlayer(), 'h000', spawnpoint, GetRandomReal(0, 360))
+	RemoveLocation(spawnpoint)
+	spawnpoint = null
 	
+	// Add them to the SURVIVORS group, and select them for the player
+	GroupAddUnit(SURVIVORS, survivor)
 	if (GetLocalPlayer() == GetEnumPlayer()) {
 		// Select the unit for the player who owns it
 		ClearSelection()
-		SelectUnit(bj_lastCreatedUnit, true)
+		SelectUnit(survivor, true)
 	}
+	survivor = null
 	
 	// Set the player's resources
 	SetPlayerStateBJ(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 1000)
 	SetPlayerStateBJ(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER, 1000)
-	RemoveLocation(spawnpoint)
 }
 
 void Init_Actions() {
