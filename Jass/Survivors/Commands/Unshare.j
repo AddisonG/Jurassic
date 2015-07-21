@@ -8,11 +8,11 @@ void Unshare_Actions() {
 	SetPlayerAlliance(triggering_player, targeted_player, ALLIANCE_SHARED_ADVANCED_CONTROL, false)
 	
 	// Inform the player who withdrew sharing.
-	call DisplayTimedTextToPlayer(triggering_player, 0, 0, 5.00, \
+	DisplayTimedTextToPlayer(triggering_player, 0, 0, 5, \
 		"Unit sharing privileges withdrawn from " + GetPlayerName(targeted_player) + ".")
 	
 	// Inform the player who had sharing withdrawn.
-	call DisplayTimedTextToPlayer(targeted_player, 0, 0, 5.00, \
+	DisplayTimedTextToPlayer(targeted_player, 0, 0, 5, \
 		GetPlayerName(triggering_player) + " has withdrawn your unit sharing privileges.")
 }
 
@@ -21,7 +21,7 @@ void InitTrig_Unshare() {
 	trigger t = CreateTrigger()
 	
 	// Check if a player typed a string containing "-unshare ". Note the space.
-	integer player_num = 0
+	int player_num = 0
 	while (player_num < 7) {
 		TriggerRegisterPlayerChatEvent(t, Player(player_num), "-unshare ", false)
 		player_num++
