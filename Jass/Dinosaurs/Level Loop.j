@@ -6,7 +6,7 @@ void Level_Loop_Actions() {
 
 //===========================================================================
 void InitTrig_Level_Loop() {
-	local trigger t = CreateTrigger()
-	call TriggerRegisterTimerExpireEvent(t, LEVEL_TIMER)
-	call TriggerAddAction(t, function Level_Loop_Actions)
+	trigger t = CreateTrigger()
+	TriggerRegisterTimerExpireEvent(t, LEVEL_TIMER)
+	TriggerAddAction(t, function Level_Loop_Actions)
 }

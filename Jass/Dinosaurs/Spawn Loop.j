@@ -91,6 +91,8 @@ void Spawn_Dinosaur() {
 		// MaxDistance approaches 5'000, to increase chances of point being pathable
 		SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
 	endloop
+	RemoveLocation(survivor_location)
+	survivor_location = null
 	
 	// Found a point to spawn a dinosaur at. Now to decide which one.
 	
@@ -104,16 +106,21 @@ void Spawn_Dinosaur() {
 	// dino_type would be reduced by 25 (to a value of 1). The second dinosaur
 	// would spawn, since 1 < 25
 	int i = 0
-	while (dino_type > LoadInteger(DINOSAURS[DINO_LEVEL], i, 0)) {
-		dino_type -= LoadInteger(DINOSAURS[DINO_LEVEL], i, 0)
+	while (dino_type > LoadInteger(DINO_TABLE[DINO_LEVEL], i, 0)) {
+		dino_type -= LoadInteger(DINO_TABLE[DINO_LEVEL], i, 0)
 		i++
 	}
 	// The dino_type has been decided on, as well as the spawn location. Spawn.
-	CreateUnitAtLoc(Player(11), LoadInteger(DINOSAURS[DINO_LEVEL], i, 1), spawn_point, GetRandomReal(0, 360))
+	unit dino = CreateUnitAtLoc(Player(11), LoadInteger(DINO_TABLE[DINO_LEVEL], i, 1), spawn_point, GetRandomReal(0, 360))
 	
-	RemoveLocation(survivor_location)
+	// Also, stop it from trying to defend the position it spawned at
+	RemoveGuardPosition(dino)
+	
+	// Add the dinosaur to the group for the player it was spawned for.
+	GroupAddUnit(DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], dino)
+	dino = null
+	
 	RemoveLocation(spawn_point)
-	survivor_location = null
 	spawn_point = null
 }
 
@@ -124,10 +131,9 @@ void Spawn_Loop_Actions() {
 
 //===========================================================================
 void InitTrig_Spawn_Loop() {
-	// I am not using a local var, as this trigger is referenced by Begin_Spawn
-	gg_trg_Spawn_Loop = CreateTrigger()
+	SPAWN_TRIGGER = CreateTrigger()
 	// Initially disabled. Enabled by Begin_Spawn.
-	DisableTrigger(gg_trg_Spawn_Loop)
-	TriggerRegisterTimerEvent(gg_trg_Spawn_Loop, 5, true)
-	TriggerAddAction(gg_trg_Spawn_Loop, function Spawn_Loop_Actions)
+	DisableTrigger(SPAWN_TRIGGER)
+	TriggerRegisterTimerEvent(SPAWN_TRIGGER, 5, true)
+	TriggerAddAction(SPAWN_TRIGGER, function Spawn_Loop_Actions)
 }

@@ -18,7 +18,7 @@ void Trig_Ping_Base_Actions() {
 	pingTriggeringPlayerMap(-3000, -13800) // Bottom right, island
 	pingTriggeringPlayerMap(-7000, -3800) // Top, mountainous ruins
 	pingTriggeringPlayerMap(-3800, -700) // Top right, triple ruins
-    
+	
 	// MOUNTAIN LANDS
 	pingTriggeringPlayerMap(10000, 7000) // Center, crater of mounain
 	pingTriggeringPlayerMap(13050, 9050) // Right, entire mountain
@@ -26,12 +26,12 @@ void Trig_Ping_Base_Actions() {
 	pingTriggeringPlayerMap(14500, 2600) // Right, ruins by base of mountain
 	pingTriggeringPlayerMap(14000, -1500) // Bottom right, ruins by river
 	pingTriggeringPlayerMap(10800, -200) // Bottom, sunken area
-    
-    // SWAMP LANDS
-    pingTriggeringPlayerMap(600, -7000) // Left, raised area by paths
-    pingTriggeringPlayerMap(1700, -11000) // Bottom left, on river
-    
-    // FROZEN LANDS
+	
+	// SWAMP LANDS
+	pingTriggeringPlayerMap(600, -7000) // Left, raised area by paths
+	pingTriggeringPlayerMap(1700, -11000) // Bottom left, on river
+	
+	// FROZEN LANDS
 }
 
 //===========================================================================

@@ -17,7 +17,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd0_1') // Stegasaurus
 	SaveInteger(temp, 2, KEY, 'd0_2') // Bat
 	SaveInteger(temp, 3, KEY, 'd0_3') // Mosquitoes
-	DINOSAURS[0] = temp
+	DINO_TABLE[0] = temp
 	
 	// LEVEL 2
 	temp = InitHashtable()
@@ -29,7 +29,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd1_1') // Triceratops
 	SaveInteger(temp, 2, KEY, 'd1_2') // Vampire Bat
 	SaveInteger(temp, 3, KEY, 'd1_3') // Fly Swarm
-	DINOSAURS[1] = temp
+	DINO_TABLE[1] = temp
 	
 	// LEVEL 3
 	temp = InitHashtable()
@@ -41,7 +41,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd2_1') // Armoured Triceratops
 	SaveInteger(temp, 2, KEY, 'd2_2') // Archaeopteryx
 	SaveInteger(temp, 3, KEY, 'd2_3') // Flesh Flies
-	DINOSAURS[2] = temp
+	DINO_TABLE[2] = temp
 	
 	// LEVEL 4
 	temp = InitHashtable()
@@ -52,8 +52,8 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 0, KEY, 'd3_0') // Ceratosaurus
 	SaveInteger(temp, 1, KEY, 'd3_1') // Woolly Rhino
 	SaveInteger(temp, 2, KEY, 'd3_2') // Ancient Archaeopteryx
-	SaveInteger(temp, 3, KEY, 'd3_3') // Giant Hornet
-	DINOSAURS[3] = temp
+	SaveInteger(temp, 3, KEY, 'd3_3') // Large Flesh Fly Swarm
+	DINO_TABLE[3] = temp
 	
 	// LEVEL 5
 	temp = InitHashtable()
@@ -65,7 +65,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 1, KEY, 'd4_1') // 
 	SaveInteger(temp, 2, KEY, 'd4_2') // 
 	SaveInteger(temp, 3, KEY, 'd4_3') // Infected Swarm
-	DINOSAURS[4] = temp
+	DINO_TABLE[4] = temp
 	
 	temp = null
 }

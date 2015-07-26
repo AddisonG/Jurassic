@@ -6,7 +6,7 @@ void Anger_Loop_Actions() {
 
 //===========================================================================
 void InitTrig_Anger_Loop() {
-	local trigger t = CreateTrigger()
-	call TriggerRegisterTimerExpireEvent(t, ANGER_TIMER)
-	call TriggerAddAction(t, function Anger_Loop_Actions)
+	trigger t = CreateTrigger()
+	TriggerRegisterTimerExpireEvent(t, ANGER_TIMER)
+	TriggerAddAction(t, function Anger_Loop_Actions)
 }

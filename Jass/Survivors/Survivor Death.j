@@ -4,8 +4,8 @@ bool Survivor_Death_Conditions() {
 }
 
 void Survivor_Death_Actions() {
-	GroupRemoveUnit(udg_GAME_Survivors, GetTriggerUnit())
-	if (IsUnitGroupEmptyBJ(udg_GAME_Survivors)) {
+	GroupRemoveUnit(SURVIVORS, GetTriggerUnit())
+	if (IsUnitGroupEmptyBJ(SURVIVORS)) {
 		DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 20, "Everybody loose.")
 		
 		// Maybe I should just pause the game?
@@ -13,7 +13,6 @@ void Survivor_Death_Actions() {
 		// Pause all timers
 		PauseTimer(ANGER_TIMER)
 		PauseTimer(LEVEL_TIMER)
-		PauseTimer(SPAWN_TIMER)
 		PauseTimer(END_TIMER)
 		
 		// Reveal map

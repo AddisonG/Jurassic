@@ -1,9 +1,4 @@
 globals
-group udg_GAME_Survivors=null
-force udg_TEMP_Player_Group=null
-timer udg_TIP_Timer=null
-force udg_TIP_Group=null
-string array udg_TIP_Text
 rect gg_rct_Cave_East=null
 rect gg_rct_Cave_West=null
 rect gg_rct_Frozen_Lands=null
@@ -33,10 +28,8 @@ rect gg_rct_Tropical_Lands=null
 rect gg_rct_Mountain_Lands=null
 sound gg_snd_Welcome=null
 string gg_snd_Storm_Earth_Fire
-trigger gg_trg_TEST=null
 trigger gg_trg_Mountain_Cave=null
-trigger gg_trg_Drop_Tools=null
-trigger gg_trg_Pickup_Tools=null
+trigger gg_trg_Pickup_Drop_Tools=null
 trigger gg_trg_Ping_Base=null
 trigger gg_trg_Part_Share=null
 trigger gg_trg_Full_Share=null
@@ -49,7 +42,6 @@ trigger gg_trg_Spawn_Loop=null
 trigger gg_trg_Item_Scatter=null
 trigger gg_trg_Spawning_Table=null
 trigger gg_trg_Init=null
-trigger gg_trg_Menu=null
 trigger gg_trg_Game_Start=null
 trigger gg_trg_Scout_Tower=null
 trigger gg_trg_Scout_Tower_Stop=null
@@ -60,35 +52,29 @@ trigger gg_trg_MineSite_Stop=null
 trigger gg_trg_Mechanic_Init=null
 trigger gg_trg_Mechanic_Recipie=null
 trigger gg_trg_Pistol=null
-trigger gg_trg_Tip_Disable=null
-trigger gg_trg_Tip_Enable=null
 trigger gg_trg_Tip_Init=null
 trigger gg_trg_Tip_Timer=null
-unit gg_unit_d0_1_0031=null
-unit gg_unit_d0_2_0026=null
-unit gg_unit_d0_0_0024=null
-unit gg_unit_d1_3_0033=null
-unit gg_unit_d0_3_0020=null
-unit gg_unit_d1_0_0022=null
-unit gg_unit_d1_1_0025=null
-unit gg_unit_d1_2_0032=null
+trigger gg_trg_Tip_Enable=null
+trigger gg_trg_Tip_Disable=null
 location spawn_point
 force PLAYERS=CreateForce()
-group SURVIVORS
+group SURVIVORS=CreateGroup()
+group array DINOSAUR_GROUPS
 rect WHOLE_MAP
-timer START_TIMER
-timer END_TIMER
-timer SPAWN_TIMER
-hashtable array DINOSAURS
+timer START_TIMER=CreateTimer()
+timer END_TIMER=CreateTimer()
+timer SPAWN_TIMER=CreateTimer()
+trigger SPAWN_TRIGGER
+hashtable array DINO_TABLE[10]
 location MAP_CENTER
 integer DIFFICULTY
-timer ANGER_TIMER
-timer LEVEL_TIMER
+timer ANGER_TIMER=CreateTimer()
+timer LEVEL_TIMER=CreateTimer()
 integer DINO_ANGER
 integer DINO_LEVEL
 real SPAWN_MAX_DIST
 real SPAWN_MIN_DIST
-dialog DIFFICULTY_MENU
+dialog DIFFICULTY_MENU=DialogCreate()
 button array DIFFICULTY_BUTTONS
 hashtable FOGMODS=InitHashtable()
 integer ENGINE_NUM=7
@@ -116,20 +102,13 @@ integer VEHICLE_TANK=0x68303048
 integer VEHICLE_COBRA=0x6E303039
 integer VEHICLE_TRANSPORT=0x6E303035
 integer VEHICLE_AAHELI=0x6E303042
+timer TIP_TIMER=CreateTimer()
+force TIP_PLAYERS=CreateForce()
+integer TIP_NUM=16
+string array TIPS
 
 endglobals
 function InitGlobals takes nothing returns nothing
-local integer i=0
-set udg_GAME_Survivors=CreateGroup()
-set udg_TEMP_Player_Group=CreateForce()
-set udg_TIP_Timer=CreateTimer()
-set udg_TIP_Group=CreateForce()
-set i=0
-loop
-exitwhen      (i>16)
-set udg_TIP_Text[i]=""
-set i=i+1
-endloop
 endfunction
 function ItemTable000000_DropItems takes nothing returns nothing
 local widget trigWidget=null
@@ -282,69 +261,63 @@ endfunction
 function CreateAllItems takes nothing returns nothing
 local integer itemID
 call CreateItem(0x49303034,470.4,0.6)
-call CreateItem(0x49303034,517.2,66.1)
+call CreateItem(0x49303034,499.0,38.3)
+call CreateItem(0x49303034,459.0,34.7)
 call CreateItem(0x49303034,510.6,5.8)
-call CreateItem(0x49303034,479.9,35.1)
-call CreateItem(0x49303034,450.6,51.8)
-call CreateItem(0x49303034,466.5,86.9)
-call CreateItem(0x49303035,-531.6,-631.6)
 call CreateItem(0x49303035,-569.3,-634.6)
+call CreateItem(0x49303035,-531.6,-631.6)
 call CreateItem(0x49303036,-444.9,-629.8)
 call CreateItem(0x49303036,-413.0,-626.6)
 call CreateItem(0x49303037,-321.5,-621.0)
 call CreateItem(0x49303037,-289.3,-621.8)
-call CreateItem(0x49303038,-201.9,-626.0)
 call CreateItem(0x49303038,-169.7,-622.9)
-call CreateItem(0x49303039,-88.7,-632.9)
+call CreateItem(0x49303038,-201.9,-626.0)
 call CreateItem(0x49303039,-54.8,-629.8)
+call CreateItem(0x49303039,-88.7,-632.9)
 call CreateItem(0x49303041,34.8,-622.0)
 call CreateItem(0x49303041,67.5,-618.8)
-call CreateItem(0x49303042,194.9,-624.1)
 call CreateItem(0x49303042,157.8,-625.2)
-call CreateItem(0x49303044,318.4,80.9)
-call CreateItem(0x49303044,307.9,45.8)
+call CreateItem(0x49303042,194.9,-624.1)
 call CreateItem(0x49303044,314.5,4.6)
 call CreateItem(0x49303044,350.3,-2.6)
+call CreateItem(0x49303044,307.9,45.8)
 call CreateItem(0x49303044,339.8,41.8)
-call CreateItem(0x49303045,380.0,220.1)
-call CreateItem(0x49303045,377.1,252.4)
-call CreateItem(0x49303045,408.0,243.5)
-call CreateItem(0x49303045,349.3,230.9)
 call CreateItem(0x49303045,346.1,263.4)
-call CreateItem(0x49303048,584.1,199.7)
-call CreateItem(0x49303048,550.2,187.2)
-call CreateItem(0x49303048,554.9,228.4)
-call CreateItem(0x49303048,574.6,159.6)
-call CreateItem(0x49303048,588.5,234.5)
-call CreateItem(0x49303048,516.9,199.4)
-call CreateItem(0x49303049,-529.0,-514.6)
+call CreateItem(0x49303045,377.1,252.4)
+call CreateItem(0x49303045,349.3,230.9)
+call CreateItem(0x49303045,380.0,220.1)
+call CreateItem(0x49303048,516.6,167.3)
+call CreateItem(0x49303048,551.3,205.3)
+call CreateItem(0x49303048,515.0,202.6)
+call CreateItem(0x49303048,551.3,171.3)
 call CreateItem(0x49303049,-564.9,-515.8)
-call CreateItem(0x4930304A,-408.4,-517.7)
+call CreateItem(0x49303049,-529.0,-514.6)
 call CreateItem(0x4930304A,-444.5,-512.6)
-call CreateItem(0x4930304B,-322.2,-517.8)
+call CreateItem(0x4930304A,-408.4,-517.7)
 call CreateItem(0x4930304B,-289.2,-516.5)
+call CreateItem(0x4930304B,-322.2,-517.8)
 call CreateItem(0x4930304C,-162.4,-513.5)
 call CreateItem(0x4930304C,-197.0,-514.7)
-call CreateItem(0x4930304D,-43.8,-506.0)
 call CreateItem(0x4930304D,-76.9,-505.1)
+call CreateItem(0x4930304D,-43.8,-506.0)
 call CreateItem(0x4930304E,196.9,-506.8)
 call CreateItem(0x4930304E,164.2,-512.6)
 call CreateItem(0x4930304F,47.0,-510.7)
 call CreateItem(0x4930304F,82.8,-511.6)
-call CreateItem(0x49303050,313.6,-505.3)
 call CreateItem(0x49303050,281.3,-504.5)
+call CreateItem(0x49303050,313.6,-505.3)
 call CreateItem(0x49303051,283.6,-365.9)
 call CreateItem(0x49303051,306.0,-334.0)
-call CreateItem(0x49303052,169.1,-348.8)
 call CreateItem(0x49303052,182.8,-314.4)
+call CreateItem(0x49303052,169.1,-348.8)
 call CreateItem(0x49303053,317.9,-241.8)
 call CreateItem(0x49303053,339.7,-209.6)
 call CreateItem(0x49303054,75.2,-352.5)
 call CreateItem(0x49303054,89.4,-314.1)
 call CreateItem(0x49303055,225.4,-211.0)
 call CreateItem(0x49303055,205.0,-236.7)
-call CreateItem(0x49303056,116.6,-192.8)
 call CreateItem(0x49303056,93.7,-216.4)
+call CreateItem(0x49303056,116.6,-192.8)
 endfunction
 function CreateUnitsForPlayer0 takes nothing returns nothing
 local player p=Player(0)
@@ -352,29 +325,33 @@ local unit u
 local integer unitID
 local trigger t
 local real life
-set u=CreateUnit(p,0x64305F33,2283.7,-448.2,270.000)
-set u=CreateUnit(p,0x6830304C,-363.5,530.6,321.711)
+set u=CreateUnit(p,0x64305F33,2283.7,-472.2,270.000)
+set u=CreateUnit(p,0x6830304C,-371.7,688.4,305.041)
 set u=CreateUnit(p,0x64315F30,1744.5,-775.2,270.000)
-set u=CreateUnit(p,0x64305F30,1741.7,-478.2,270.000)
+set u=CreateUnit(p,0x64305F30,1749.7,-478.2,270.000)
 set u=CreateUnit(p,0x64315F31,1957.2,-772.9,270.000)
 call SetUnitState(u,UNIT_STATE_MANA,0)
-set u=CreateUnit(p,0x64305F32,2133.7,-465.2,270.000)
+set u=CreateUnit(p,0x64305F32,2149.7,-465.2,270.000)
 call SetUnitColor(u,ConvertPlayerColor(12))
 set u=CreateUnit(p,0x64305F31,1963.4,-478.7,270.000)
 set u=CreateUnit(p,0x64315F32,2146.0,-758.5,270.000)
 call SetUnitColor(u,ConvertPlayerColor(0))
 set u=CreateUnit(p,0x64315F33,2299.8,-749.6,270.000)
+set u=CreateUnit(p,0x64335F30,1726.7,-1454.3,270.000)
+set u=CreateUnit(p,0x64335F33,2321.9,-1451.7,270.000)
 set u=CreateUnit(p,0x64325F30,1736.5,-1111.1,270.000)
 set u=CreateUnit(p,0x64325F31,1959.1,-1116.7,270.000)
-set u=CreateUnit(p,0x64325F32,2131.9,-1432.9,270.000)
+set u=CreateUnit(p,0x64325F32,2155.9,-1448.9,270.000)
 set u=CreateUnit(p,0x64325F33,2307.4,-1121.8,270.000)
-set u=CreateUnit(p,0x6830304D,-259.1,569.1,309.589)
-set u=CreateUnit(p,0x6830304E,-155.0,578.7,297.191)
-set u=CreateUnit(p,0x68303044,-34.1,591.4,279.644)
-set u=CreateUnit(p,0x6830304F,70.4,587.4,263.525)
-set u=CreateUnit(p,0x68303045,173.5,584.4,248.307)
-set u=CreateUnit(p,0x6830304A,281.5,567.7,233.926)
-set u=CreateUnit(p,0x6830304B,399.5,529.3,219.763)
+set u=CreateUnit(p,0x6830304D,-267.3,726.9,295.035)
+set u=CreateUnit(p,0x6830304E,-163.2,736.5,285.468)
+set u=CreateUnit(p,0x68303044,-42.3,749.2,273.633)
+set u=CreateUnit(p,0x6830304F,62.2,745.2,263.352)
+set u=CreateUnit(p,0x68303045,165.3,742.2,253.516)
+set u=CreateUnit(p,0x6830304A,273.3,725.5,243.534)
+set u=CreateUnit(p,0x6830304B,369.1,681.1,233.997)
+set u=CreateUnit(p,0x64335F32,2146.9,-1110.2,270.000)
+set u=CreateUnit(p,0x64335F31,1961.6,-1445.7,270.000)
 endfunction
 function CreateUnitsForPlayer11 takes nothing returns nothing
 local player p=Player(11)
@@ -384,8 +361,8 @@ local trigger t
 local real life
 set u=CreateUnit(p,0x6E747267,-3815.1,-15236.9,350.420)
 call IssueImmediateOrder(u,"Thornyshield")
-set u=CreateUnit(p,0x64335F32,2138.9,-1094.2,270.000)
-set u=CreateUnit(p,0x64335F31,1961.6,-1445.7,270.000)
+set u=CreateUnit(p,0x6E303041,-0.0,0.0,0.000)
+call IssueImmediateOrder(u,"")
 endfunction
 function CreatePlayerBuildings takes nothing returns nothing
 endfunction
@@ -465,8 +442,8 @@ call EnableWeatherEffect(we,true)
 set gg_rct_Swamp_3=Rect(5824.0,-6592.0,8384.0,-5152.0)
 set we=AddWeatherEffect(gg_rct_Swamp_3,0x46446768)
 call EnableWeatherEffect(we,true)
-set gg_rct_Swamp_Lands=Rect(352.0,-16384.0,15136.0,-2976.0)
-set gg_rct_Tropical_Lands=Rect(-16000.0,-16384.0,-192.0,-1664.0)
+set gg_rct_Swamp_Lands=Rect(352.0,-16384.0,16384.0,-2944.0)
+set gg_rct_Tropical_Lands=Rect(-16000.0,-16384.0,-192.0,-832.0)
 set gg_rct_Mountain_Lands=Rect(3168.0,-2752.0,16384.0,16384.0)
 endfunction
 function Sharing_Conditions takes nothing returns boolean
@@ -482,15 +459,6 @@ if            (targeted_player_index<1 or targeted_player_index>7) then
 return         false
 endif
 return         true
-endfunction
-function Trig_TEST_Actions takes nothing returns nothing
-call CreateImageBJ("ReplaceableTextures\\CommandButtons\\BTNTriceratops.blp",128.00,GetRectCenter(GetPlayableMapRect()),0.00,2)
-call SetImageRenderAlways(GetLastCreatedImage(),true)
-endfunction
-function InitTrig_TEST takes nothing returns nothing
-set gg_trg_TEST=CreateTrigger()
-call DisableTrigger(gg_trg_TEST)
-call TriggerAddAction(gg_trg_TEST,function Trig_TEST_Actions)
 endfunction
 function Trig_Mountain_Cave_Conditions takes nothing returns boolean
 return         IsUnitType(GetTriggerUnit(),UNIT_TYPE_GROUND)
@@ -519,59 +487,50 @@ call TriggerRegisterEnterRectSimple(t,gg_rct_Cave_East)
 call TriggerAddCondition(t,Condition(function Trig_Mountain_Cave_Conditions))
 call TriggerAddAction(t,function Trig_Mountain_Cave_Actions)
 endfunction
-function Trig_Drop_Tools_Func003Func001001 takes nothing returns boolean
-return        (GetOwningPlayer(GetEnumUnit())==GetTriggerPlayer())
-endfunction
-function Trig_Drop_Tools_Func003A takes nothing returns nothing
-if            (Trig_Drop_Tools_Func003Func001001())then
-call UnitRemoveAbilityBJ(0x41303039,GetEnumUnit())
-else
-call DoNothing()
+function Drop_Tools takes nothing returns nothing
+if            (GetOwningPlayer(GetEnumUnit())==GetTriggerPlayer()) then
+call UnitRemoveAbility(GetEnumUnit(),0x41303039)
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,3,"Dropped tools. Type -pickup or -tools to pick them up again.")
 endif
 endfunction
-function Trig_Drop_Tools_Actions takes nothing returns nothing
-set udg_TEMP_Player_Group=GetForceOfPlayer(GetTriggerPlayer())
-call DisplayTimedTextToForce(udg_TEMP_Player_Group,3.00,"TRIGSTR_1520")
-call ForGroupBJ(udg_GAME_Survivors,function Trig_Drop_Tools_Func003A)
-call DestroyForce(udg_TEMP_Player_Group)
-endfunction
-function InitTrig_Drop_Tools takes nothing returns nothing
-set gg_trg_Drop_Tools=CreateTrigger()
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(0),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(1),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(2),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(3),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(4),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(5),"-drop",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Drop_Tools,Player(6),"-drop",true)
-call TriggerAddAction(gg_trg_Drop_Tools,function Trig_Drop_Tools_Actions)
-endfunction
-function Trig_Pickup_Tools_Func003Func001001 takes nothing returns boolean
-return        (GetOwningPlayer(GetEnumUnit())==GetTriggerPlayer())
-endfunction
-function Trig_Pickup_Tools_Func003A takes nothing returns nothing
-if            (Trig_Pickup_Tools_Func003Func001001())then
-call UnitAddAbilityBJ(0x41303039,GetEnumUnit())
-else
-call DoNothing()
+function Pickup_Tools takes nothing returns nothing
+if            (GetOwningPlayer(GetEnumUnit())==GetTriggerPlayer()) then
+call UnitAddAbility(GetEnumUnit(),0x41303039)
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,3,"Picked up tools. Type -drop to drop them again.")
 endif
 endfunction
-function Trig_Pickup_Tools_Actions takes nothing returns nothing
-set udg_TEMP_Player_Group=GetForceOfPlayer(GetTriggerPlayer())
-call DisplayTimedTextToForce(udg_TEMP_Player_Group,3.00,"TRIGSTR_1521")
-call ForGroupBJ(udg_GAME_Survivors,function Trig_Pickup_Tools_Func003A)
-call DestroyForce(udg_TEMP_Player_Group)
+function Pickup_Drop_Tools_Actions takes nothing returns nothing
+local string message=GetEventPlayerChatString()
+if            (message=="-drop") then
+call ForGroup(SURVIVORS,function Drop_Tools)
+else
+call ForGroup(SURVIVORS,function Pickup_Tools)
+endif
 endfunction
-function InitTrig_Pickup_Tools takes nothing returns nothing
-set gg_trg_Pickup_Tools=CreateTrigger()
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(0),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(1),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(2),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(3),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(4),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(5),"-pickup",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Pickup_Tools,Player(6),"-pickup",true)
-call TriggerAddAction(gg_trg_Pickup_Tools,function Trig_Pickup_Tools_Actions)
+function InitTrig_Pickup_Drop_Tools takes nothing returns nothing
+local trigger t=CreateTrigger()
+call TriggerRegisterPlayerChatEvent(t,Player(0),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(1),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(2),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(3),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(4),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(5),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(6),"-pickup",true)
+call TriggerRegisterPlayerChatEvent(t,Player(0),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(1),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(2),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(3),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(4),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(5),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(6),"-tools",true)
+call TriggerRegisterPlayerChatEvent(t,Player(0),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(1),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(2),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(3),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(4),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(5),"-drop",true)
+call TriggerRegisterPlayerChatEvent(t,Player(6),"-drop",true)
+call TriggerAddAction(t,function Pickup_Drop_Tools_Actions)
 endfunction
 function pingTriggeringPlayerMap takes real x,real y returns nothing
 if            (GetTriggerPlayer()==GetLocalPlayer()) then
@@ -613,8 +572,8 @@ local player targeted_player=Player(S2I(SubString(message,StringLength(message),
 local player triggering_player=GetTriggerPlayer()
 call SetPlayerAlliance(triggering_player,targeted_player,ALLIANCE_SHARED_CONTROL,true)
 call SetPlayerAlliance(triggering_player,targeted_player,ALLIANCE_SHARED_ADVANCED_CONTROL,false)
-call DisplayTimedTextToPlayer(triggering_player,0,0,5.00,"Partial unit sharing privileges granted to "+GetPlayerName(targeted_player)+".")
-call DisplayTimedTextToPlayer(targeted_player,0,0,5.00,GetPlayerName(triggering_player)+" has granted you partial unit sharing privileges.")
+call DisplayTimedTextToPlayer(triggering_player,0,0,5,"Partial unit sharing privileges granted to "+GetPlayerName(targeted_player)+".")
+call DisplayTimedTextToPlayer(targeted_player,0,0,5,GetPlayerName(triggering_player)+" has granted you partial unit sharing privileges.")
 endfunction
 function InitTrig_Part_Share takes nothing returns nothing
 local trigger t=CreateTrigger()
@@ -672,8 +631,8 @@ function Survivor_Death_Conditions takes nothing returns boolean
 return         GetUnitTypeId(GetTriggerUnit())==0x68303030
 endfunction
 function Survivor_Death_Actions takes nothing returns nothing
-call GroupRemoveUnit(udg_GAME_Survivors,GetTriggerUnit())
-if            (IsUnitGroupEmptyBJ(udg_GAME_Survivors)) then
+call GroupRemoveUnit(SURVIVORS,GetTriggerUnit())
+if            (IsUnitGroupEmptyBJ(SURVIVORS)) then
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,20,"Everybody loose.")
 call PauseTimer(ANGER_TIMER)
 call PauseTimer(LEVEL_TIMER)
@@ -687,7 +646,13 @@ endif
 endfunction
 function InitTrig_Survivor_Death takes nothing returns nothing
 local trigger t=CreateTrigger()
-call TriggerRegisterAnyUnitEventBJ(t,EVENT_PLAYER_UNIT_DEATH)
+call TriggerRegisterPlayerUnitEvent(t,Player(0),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(1),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(2),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(3),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(4),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(5),EVENT_PLAYER_UNIT_DEATH,null)
+call TriggerRegisterPlayerUnitEvent(t,Player(6),EVENT_PLAYER_UNIT_DEATH,null)
 call TriggerAddCondition(t,Condition(function Survivor_Death_Conditions))
 call TriggerAddAction(t,function Survivor_Death_Actions)
 endfunction
@@ -695,7 +660,7 @@ function Begin_Spawn_Actions takes nothing returns nothing
 set DINO_LEVEL=0
 set DINO_ANGER=0
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"The dinosaurs approach...")
-call EnableTrigger(gg_trg_Spawn_Loop)
+call EnableTrigger(SPAWN_TRIGGER)
 call TimerStart(LEVEL_TIMER,180+(20*DIFFICULTY),true,null)
 call TimerStart(ANGER_TIMER,115+(15*DIFFICULTY),true,null)
 call DestroyTrigger(GetTriggeringTrigger())
@@ -739,34 +704,42 @@ set survivor_location=null
 endfunction
 function Spawn_Dinosaur takes nothing returns nothing
 local location survivor_location=GetUnitLoc(GetEnumUnit())
+local boolean pathable
 local integer dino_type=GetRandomInt(0,100)
 local integer i=0
+local unit dino
 set SPAWN_MAX_DIST=SPAWN_MIN_DIST+3000
 loop
 set spawn_point=PolarProjectionBJ(survivor_location,GetRandomReal(SPAWN_MIN_DIST,SPAWN_MAX_DIST),GetRandomReal(0,360))
+set pathable=IsTerrainPathable(GetLocationX(spawn_point),GetLocationY(spawn_point),PATHING_TYPE_WALKABILITY)
+set pathable=pathable and RectContainsCoords(WHOLE_MAP,GetLocationX(spawn_point),GetLocationY(spawn_point))
+if            (pathable) then
 call ForGroup(SURVIVORS,function Verify_Point)
 exitwhen       spawn_point!=null
+endif
 set SPAWN_MAX_DIST=SPAWN_MAX_DIST*0.96+200
 endloop
+call RemoveLocation(survivor_location)
+set survivor_location=null
 loop
-exitwhen  not(dino_type>LoadInteger(DINOSAURS[DINO_LEVEL],i,0))
-set dino_type=dino_type-(LoadInteger(DINOSAURS[DINO_LEVEL],i,0))
+exitwhen  not(dino_type>LoadInteger(DINO_TABLE[DINO_LEVEL],i,0))
+set dino_type=dino_type-(LoadInteger(DINO_TABLE[DINO_LEVEL],i,0))
 set i=i+1
 endloop
-call CreateUnitAtLoc(Player(11),LoadInteger(DINOSAURS[DINO_LEVEL],i,1),spawn_point,bj_UNIT_FACING)
-call RemoveLocation(survivor_location)
+set dino=CreateUnitAtLoc(Player(11),LoadInteger(DINO_TABLE[DINO_LEVEL],i,1),spawn_point,GetRandomReal(0,360))
+call GroupAddUnit(DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],dino)
+set dino=null
 call RemoveLocation(spawn_point)
-set survivor_location=null
 set spawn_point=null
 endfunction
 function Spawn_Loop_Actions takes nothing returns nothing
 call ForGroup(SURVIVORS,function Spawn_Dinosaur)
 endfunction
 function InitTrig_Spawn_Loop takes nothing returns nothing
-set gg_trg_Spawn_Loop=CreateTrigger()
-call DisableTrigger(gg_trg_Spawn_Loop)
-call TriggerRegisterTimerEvent(gg_trg_Spawn_Loop,5,true)
-call TriggerAddAction(gg_trg_Spawn_Loop,function Spawn_Loop_Actions)
+set SPAWN_TRIGGER=CreateTrigger()
+call DisableTrigger(SPAWN_TRIGGER)
+call TriggerRegisterTimerEvent(SPAWN_TRIGGER,5,true)
+call TriggerAddAction(SPAWN_TRIGGER,function Spawn_Loop_Actions)
 endfunction
 function Item_Scatter_Actions takes nothing returns nothing
 local location temp
@@ -806,7 +779,7 @@ call SaveInteger(temp,0,KEY,0x64305F30)
 call SaveInteger(temp,1,KEY,0x64305F31)
 call SaveInteger(temp,2,KEY,0x64305F32)
 call SaveInteger(temp,3,KEY,0x64305F33)
-set DINOSAURS[0]=temp
+set DINO_TABLE[0]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,32)
 call SaveInteger(temp,1,VAL,32)
@@ -816,7 +789,7 @@ call SaveInteger(temp,0,KEY,0x64315F30)
 call SaveInteger(temp,1,KEY,0x64315F31)
 call SaveInteger(temp,2,KEY,0x64315F32)
 call SaveInteger(temp,3,KEY,0x64315F33)
-set DINOSAURS[1]=temp
+set DINO_TABLE[1]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,32)
 call SaveInteger(temp,1,VAL,32)
@@ -826,7 +799,7 @@ call SaveInteger(temp,0,KEY,0x64325F30)
 call SaveInteger(temp,1,KEY,0x64325F31)
 call SaveInteger(temp,2,KEY,0x64325F32)
 call SaveInteger(temp,3,KEY,0x64325F33)
-set DINOSAURS[2]=temp
+set DINO_TABLE[2]=temp
 set temp=InitHashtable()
 call SaveInteger(temp,0,VAL,30)
 call SaveInteger(temp,1,VAL,25)
@@ -836,57 +809,67 @@ call SaveInteger(temp,0,KEY,0x64335F30)
 call SaveInteger(temp,1,KEY,0x64335F31)
 call SaveInteger(temp,2,KEY,0x64335F32)
 call SaveInteger(temp,3,KEY,0x64335F33)
-set DINOSAURS[3]=temp
+set DINO_TABLE[3]=temp
+set temp=InitHashtable()
+call SaveInteger(temp,0,VAL,25)
+call SaveInteger(temp,1,VAL,25)
+call SaveInteger(temp,2,VAL,25)
+call SaveInteger(temp,3,VAL,25)
+call SaveInteger(temp,0,KEY,0x64345F30)
+call SaveInteger(temp,1,KEY,0x64345F31)
+call SaveInteger(temp,2,KEY,0x64345F32)
+call SaveInteger(temp,3,KEY,0x64345F33)
+set DINO_TABLE[4]=temp
 set temp=null
 endfunction
 function InitTrig_Spawning_Table takes nothing returns nothing
-call TriggerAddAction(CreateTrigger(),function Setup_Spawning_Table)
+local trigger t=CreateTrigger()
+call TriggerAddAction(t,function Setup_Spawning_Table)
+call TriggerRegisterTimerEvent(t,0,false)
 endfunction
 function Player_Definition takes nothing returns boolean
 return        (GetPlayerController(GetFilterPlayer())==MAP_CONTROL_USER) and (GetPlayerSlotState(GetFilterPlayer())==PLAYER_SLOT_STATE_PLAYING)
 endfunction
 function Player_Setup takes nothing returns nothing
 local location spawnpoint=PolarProjectionBJ(MAP_CENTER,GetRandomReal(0,300),GetRandomReal(0,360))
-call CreateUnitAtLoc(GetEnumPlayer(),0x68303030,spawnpoint,GetRandomReal(0,360))
-call GroupAddUnit(SURVIVORS,bj_lastCreatedUnit)
+local unit survivor=CreateUnitAtLoc(GetEnumPlayer(),0x68303030,spawnpoint,GetRandomReal(0,360))
+call RemoveLocation(spawnpoint)
+set spawnpoint=null
+call GroupAddUnit(SURVIVORS,survivor)
 if            (GetLocalPlayer()==GetEnumPlayer()) then
 call ClearSelection()
-call SelectUnit(bj_lastCreatedUnit,true)
+call SelectUnit(survivor,true)
 endif
-call SetPlayerStateBJ(GetEnumPlayer(),PLAYER_STATE_RESOURCE_GOLD,1000)
-call SetPlayerStateBJ(GetEnumPlayer(),PLAYER_STATE_RESOURCE_LUMBER,1000)
-call RemoveLocation(spawnpoint)
+set survivor=null
+set DINOSAUR_GROUPS[GetPlayerId(GetEnumPlayer())]=CreateGroup()
+call SetPlayerState(GetEnumPlayer(),PLAYER_STATE_GOLD_GATHERED,1000)
+call SetPlayerState(GetEnumPlayer(),PLAYER_STATE_LUMBER_GATHERED,1000)
 endfunction
 function Init_Actions takes nothing returns nothing
-local boolexpr conditions=Condition(function Player_Definition)
+local boolexpr conditions
+call StopMusic(false)
+call PauseGame(true)
+set conditions=Condition(function Player_Definition)
 call ForceEnumPlayers(PLAYERS,conditions)
 call DestroyBoolExpr(conditions)
 set conditions=null
 set WHOLE_MAP=bj_mapInitialPlayableArea
-set MAP_CENTER=Location(GetRectCenterX(bj_mapInitialPlayableArea),GetRectCenterY(bj_mapInitialPlayableArea))
+set MAP_CENTER=Location(GetRectCenterX(WHOLE_MAP),GetRectCenterY(WHOLE_MAP))
 call SetPlayerState(Player(11),PLAYER_STATE_GIVES_BOUNTY,1)
 call ForForce(PLAYERS,function Player_Setup)
-call DestroyTrigger(GetTriggeringTrigger())
-endfunction
-function InitTrig_Init takes nothing returns nothing
-call TriggerAddAction(CreateTrigger(),function Init_Actions)
-endfunction
-function Menu_Actions takes nothing returns nothing
-call StopMusic(false)
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1,"Red is deciding on difficulty...")
 call DialogSetMessage(DIFFICULTY_MENU,"- |c00ff0000Select Difficulty|r -")
 set DIFFICULTY_BUTTONS[0]=DialogAddButton(DIFFICULTY_MENU,"|c0066ff33EASY|r",0)
 set DIFFICULTY_BUTTONS[1]=DialogAddButton(DIFFICULTY_MENU,"|c00ffff00MEDIUM|r",0)
 set DIFFICULTY_BUTTONS[2]=DialogAddButton(DIFFICULTY_MENU,"|c00ff9900HARD|r",0)
 set DIFFICULTY_BUTTONS[3]=DialogAddButton(DIFFICULTY_MENU,"|c00ff0000JURASSIC|r",0)
 call DialogDisplay(Player(0),DIFFICULTY_MENU,true)
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1,"Red is deciding on difficulty...")
-call PauseGame(true)
 call DestroyTrigger(GetTriggeringTrigger())
 endfunction
-function InitTrig_Menu takes nothing returns nothing
+function InitTrig_Init takes nothing returns nothing
 local trigger t=CreateTrigger()
+call TriggerAddAction(t,function Init_Actions)
 call TriggerRegisterTimerEvent(t,0,false)
-call TriggerAddAction(t,function Menu_Actions)
 endfunction
 function Game_Start_Actions takes nothing returns nothing
 local integer difficulty_num=4
@@ -898,10 +881,12 @@ loop
 exitwhen  not(i<=difficulty_num)
 if            (GetClickedButton()==DIFFICULTY_BUTTONS[i]) then
 set DIFFICULTY=i
-exitwhen       true
+set DIFFICULTY_BUTTONS[i]=null
 endif
 set i=i+1
 endloop
+call DialogDestroy(DIFFICULTY_MENU)
+set DIFFICULTY_MENU=null
 call PauseGame(false)
 set temp=Location(GetLocationX(MAP_CENTER),GetLocationY(MAP_CENTER)+50)
 set helicopter=CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE),0x6E303039,temp,0)
@@ -916,14 +901,14 @@ endif
 set SPAWN_MIN_DIST=1000-150*DIFFICULTY
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,10,"Game Difficulty: "+I2S(DIFFICULTY+1)+"/"+I2S(difficulty_num))
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,10,"Time to Survive: "+I2S(30+10*DIFFICULTY)+" minutes")
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,10,"Period of Grace: "+I2S(60-15*DIFFICULTY)+" seconds")
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,10,"Period of Grace: "+I2S(60-12*DIFFICULTY)+" seconds")
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,10,"Min Dino Spawn Distance: "+R2S(SPAWN_MIN_DIST)+" units")
 call TimerStart(END_TIMER,1800+600*DIFFICULTY,false,null)
 set timerdiag=CreateTimerDialog(END_TIMER)
-call TimerDialogSetTitle(timerdiag,"TRIGSTR_550")
+call TimerDialogSetTitle(timerdiag,"Time until rescue")
 call TimerDialogDisplay(timerdiag,true)
 set timerdiag=null
-call TimerStart(START_TIMER,60-15*DIFFICULTY,false,null)
+call TimerStart(START_TIMER,60-12*DIFFICULTY,false,null)
 call DestroyTrigger(GetTriggeringTrigger())
 endfunction
 function InitTrig_Game_Start takes nothing returns nothing
@@ -1252,71 +1237,72 @@ call TriggerRegisterAnyUnitEventBJ(gg_trg_Pistol,EVENT_PLAYER_UNIT_USE_ITEM)
 call TriggerAddCondition(gg_trg_Pistol,Condition(function Trig_Pistol_Conditions))
 call TriggerAddAction(gg_trg_Pistol,function Trig_Pistol_Actions)
 endfunction
-function Trig_Tip_Disable_Actions takes nothing returns nothing
-call ForceRemovePlayerSimple(GetTriggerPlayer(),udg_TIP_Group)
+function Show_Tip takes nothing returns nothing
+call DisplayTimedTextToForce(TIP_PLAYERS,5,TIPS[GetRandomInt(0,TIP_NUM)])
 endfunction
-function InitTrig_Tip_Disable takes nothing returns nothing
-set gg_trg_Tip_Disable=CreateTrigger()
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(0),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(1),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(2),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(3),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(4),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(5),"-notips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Disable,Player(6),"-notips",true)
-call TriggerAddAction(gg_trg_Tip_Disable,function Trig_Tip_Disable_Actions)
-endfunction
-function Trig_Tip_Enable_Actions takes nothing returns nothing
-call ForceAddPlayerSimple(GetTriggerPlayer(),udg_TIP_Group)
-endfunction
-function InitTrig_Tip_Enable takes nothing returns nothing
-set gg_trg_Tip_Enable=CreateTrigger()
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(0),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(1),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(2),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(3),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(4),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(5),"-tips",true)
-call TriggerRegisterPlayerChatEvent(gg_trg_Tip_Enable,Player(6),"-tips",true)
-call TriggerAddAction(gg_trg_Tip_Enable,function Trig_Tip_Enable_Actions)
-endfunction
-function Trig_Tip_Init_Actions takes nothing returns nothing
-set udg_TIP_Text[0]="Mining sites can always be walked around, from all sides. However, the gap is very small."
-set udg_TIP_Text[1]="Type \"-base\" to show prospective places to set up at."
-set udg_TIP_Text[2]="Type \"-share X\" to partially share units with player X. This allows them to get in your vehicles, tent, etc."
-set udg_TIP_Text[3]="Type \"-fshare X\" to fully share units with player X. This allows them to control all of your units."
-set udg_TIP_Text[4]="Type \"-unshare X\" to stop sharing units with player X."
-set udg_TIP_Text[5]="Large dinosaurs deal cleave damage. This won't affect buildings much, but will eventually destroy trees."
-set udg_TIP_Text[6]="type \"-drop\" to remove the ability to harvest, and \"-pickup\" to gain it again, Good for running through trees."
-set udg_TIP_Text[7]="Bigger dinosaurs spawn every 240/220/200/180 seconds. They get more fiece every 160/145/130/115 seconds."
-set udg_TIP_Text[8]="Tents have a moderate range to get in and out of them, true to the original. Useful for jumping over barricades/cliffs."
-set udg_TIP_Text[9]="Scout towers aren't always worth upgrading. Nothing else has vision comparable to them."
-set udg_TIP_Text[10]="Bases usually can't sustain a team more than 10 minutes. Resources are limited, so moving bases is neccesary (and risky)."
-set udg_TIP_Text[11]="When moving base, plan the journey beforehand, and organize who will barricade each entrance of the new base."
-set udg_TIP_Text[12]="Dinosaurs, for the most part, spawn close to survivors, and move in their general direction."
-set udg_TIP_Text[13]="More powerful \"Roaming\" dinosaurs spawn all across the map. They are a major threat when travelling, and to bases they encounter."
-set udg_TIP_Text[14]="By mining a site as much as possible before upgrading it, its value is maximized. There's profit to be had."
-set udg_TIP_Text[15]="Type \"-notips\" or \"-tips\" to enable/disable tips."
-call StartTimerBJ(udg_TIP_Timer,true,90.00)
+function Tip_Init_Actions takes nothing returns nothing
+set TIPS[0]="Type \"-base\" to show prospective places to set up at."
+set TIPS[1]="Type \"-share X\" to partially share units with player X. This allows them to get in your vehicles, tent, etc."
+set TIPS[2]="Type \"-fshare X\" to fully share units with player X. This allows them to control all of your units."
+set TIPS[3]="Type \"-unshare X\" to stop sharing units with player X."
+set TIPS[4]="type \"-drop\" to remove the ability to harvest, and \"-pickup\" to gain it again, Good for running through trees."
+set TIPS[5]="Mining sites can always be walked around, from all sides. However, the gap is very small."
+set TIPS[6]="Large dinosaurs deal cleave damage. This won't affect buildings much, but will eventually destroy trees."
+set TIPS[7]="Bigger dinosaurs spawn every "+I2S(180+(20*DIFFICULTY))+" seconds. They get more fiece every "+I2S(115+(15*DIFFICULTY))+" seconds."
+set TIPS[8]="Tents have a moderate range to get in and out of them (just like in the original). Useful for jumping over barricades/cliffs."
+set TIPS[9]="Scout towers aren't always worth upgrading. No other building or unit provides comparable vision."
+set TIPS[10]="Bases usually can't sustain a team more than 15 minutes. Resources are limited, so moving bases is neccesary (and risky)."
+set TIPS[11]="When moving base, plan the journey beforehand, and organize who will barricade each entrance of the new base."
+set TIPS[12]="Dinosaurs, for the most part, spawn close to survivors, and move in their general direction."
+set TIPS[13]="More powerful \"Roaming\" dinosaurs spawn all across the map. They pose a major threat to lone survivors, and bases they encounter."
+set TIPS[14]="By mining a site as much as possible before upgrading it, its value is maximized. There's profit to be had."
+set TIPS[15]="Type \"-notips\" or \"-tips\" to enable/disable tips."
+call TimerStart(TIP_TIMER,90,true,function Show_Tip)
 endfunction
 function InitTrig_Tip_Init takes nothing returns nothing
-set gg_trg_Tip_Init=CreateTrigger()
-call TriggerRegisterTimerEventSingle(gg_trg_Tip_Init,0.01)
-call TriggerAddAction(gg_trg_Tip_Init,function Trig_Tip_Init_Actions)
+local trigger t=CreateTrigger()
+call TriggerRegisterTimerEvent(t,0,false)
+call TriggerAddAction(t,function Tip_Init_Actions)
 endfunction
-function Trig_Tip_Timer_Actions takes nothing returns nothing
-call DisplayTimedTextToForce(udg_TIP_Group,5.00,udg_TIP_Text[GetRandomInt(0,15)])
+function Tip_Timer_Actions takes nothing returns nothing
+call DisplayTimedTextToForce(TIP_PLAYERS,5,TIPS[GetRandomInt(0,TIP_NUM)])
 endfunction
 function InitTrig_Tip_Timer takes nothing returns nothing
-set gg_trg_Tip_Timer=CreateTrigger()
-call TriggerRegisterTimerExpireEventBJ(gg_trg_Tip_Timer,udg_TIP_Timer)
-call TriggerAddAction(gg_trg_Tip_Timer,function Trig_Tip_Timer_Actions)
+local trigger t=CreateTrigger()
+call TriggerRegisterTimerExpireEvent(t,TIP_TIMER)
+call TriggerAddAction(t,function Tip_Timer_Actions)
+endfunction
+function Tip_Enable_Actions takes nothing returns nothing
+call ForceAddPlayer(TIP_PLAYERS,GetTriggerPlayer())
+endfunction
+function InitTrig_Tip_Enable takes nothing returns nothing
+local trigger t=CreateTrigger()
+call TriggerRegisterPlayerChatEvent(t,Player(0),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(1),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(2),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(3),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(4),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(5),"-tips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(6),"-tips",true)
+call TriggerAddAction(t,function Tip_Enable_Actions)
+endfunction
+function Tip_Disable_Actions takes nothing returns nothing
+call ForceRemovePlayer(TIP_PLAYERS,GetTriggerPlayer())
+endfunction
+function InitTrig_Tip_Disable takes nothing returns nothing
+local trigger t=CreateTrigger()
+call TriggerRegisterPlayerChatEvent(t,Player(0),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(1),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(2),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(3),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(4),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(5),"-notips",true)
+call TriggerRegisterPlayerChatEvent(t,Player(6),"-notips",true)
+call TriggerAddAction(t,function Tip_Disable_Actions)
 endfunction
 function InitCustomTriggers takes nothing returns nothing
-call InitTrig_TEST()
 call InitTrig_Mountain_Cave()
-call InitTrig_Drop_Tools()
-call InitTrig_Pickup_Tools()
+call InitTrig_Pickup_Drop_Tools()
 call InitTrig_Ping_Base()
 call InitTrig_Part_Share()
 call InitTrig_Full_Share()
@@ -1329,7 +1315,6 @@ call InitTrig_Spawn_Loop()
 call InitTrig_Item_Scatter()
 call InitTrig_Spawning_Table()
 call InitTrig_Init()
-call InitTrig_Menu()
 call InitTrig_Game_Start()
 call InitTrig_Scout_Tower()
 call InitTrig_Scout_Tower_Stop()
@@ -1340,10 +1325,10 @@ call InitTrig_MineSite_Stop()
 call InitTrig_Mechanic_Init()
 call InitTrig_Mechanic_Recipie()
 call InitTrig_Pistol()
-call InitTrig_Tip_Disable()
-call InitTrig_Tip_Enable()
 call InitTrig_Tip_Init()
 call InitTrig_Tip_Timer()
+call InitTrig_Tip_Enable()
+call InitTrig_Tip_Disable()
 endfunction
 function RunInitializationTriggers takes nothing returns nothing
 call ConditionalTriggerExecute(gg_trg_Spawning_Table)
