@@ -79,13 +79,14 @@ void Spawn_Dinosaur() {
 			GetRandomReal(SPAWN_MIN_DIST, SPAWN_MAX_DIST), GetRandomReal(0, 360))
 		
 		// Ensure it is pathable, and inside map
-		//bool pathable = IsTerrainPathable(GetLocationX(spawn_point), GetLocationY(spawn_point), PATHING_TYPE_WALKABILITY)
-		//pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(spawn_point), GetLocationY(spawn_point))
+		bool pathable = IsTerrainPathable(GetLocationX(spawn_point), GetLocationY(spawn_point), PATHING_TYPE_WALKABILITY)
+		pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(spawn_point), GetLocationY(spawn_point))
 		
-		// Ensures point chosen is not closer than (SPAWN_MinDistance) units from any survivor.
-		ForGroup(SURVIVORS, function Verify_Point)
-		
-		exitwhen spawn_point != null // && pathable
+		if (pathable) {
+			// Ensures point chosen is not closer than (SPAWN_MinDistance) units from any survivor.
+			ForGroup(SURVIVORS, function Verify_Point)
+			exitwhen spawn_point != null
+		}
 		
 		// MaxDistance approaches 5'000, to increase chances of point being pathable
 		SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
@@ -108,7 +109,7 @@ void Spawn_Dinosaur() {
 		i++
 	}
 	// The dino_type has been decided on, as well as the spawn location. Spawn.
-	CreateUnitAtLoc(Player(11), LoadInteger(DINOSAURS[DINO_LEVEL], i, 1), spawn_point, bj_UNIT_FACING)
+	CreateUnitAtLoc(Player(11), LoadInteger(DINOSAURS[DINO_LEVEL], i, 1), spawn_point, GetRandomReal(0, 360))
 	
 	RemoveLocation(survivor_location)
 	RemoveLocation(spawn_point)
