@@ -1,13 +1,13 @@
 bool Mechanic_Recipe_Conditions() {
-	// TODO: GetTriggerUnit() should be survivor, too
 	int recipe = GetItemTypeId(GetManipulatedItem())
 	return \
+		GetUnitTypeId(GetTriggerUnit()) == 'h000' && (\
 		recipe == BLUEPRINTS_JEEP || \
 		recipe == BLUEPRINTS_HUMVEE || \
 		recipe == BLUEPRINTS_TANK || \
 		recipe == BLUEPRINTS_COBRA || \
 		recipe == BLUEPRINTS_TRANSPORT || \
-		recipe == BLUEPRINTS_AAHELI
+		recipe == BLUEPRINTS_AAHELI)
 }
 
 /**
@@ -29,18 +29,14 @@ bool checkEngineAndChassis(int engine_index, int min_engine, int chassis_index, 
 	bool retval = true
 	if (engine_index < min_engine) {
 		// Engine is too weak. Inform player
-		if (GetLocalPlayer() == owner) {
-			DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 3, \
-				"Engine is too weak. Must be at least " + ENGINE_NAME[min_engine])
-		}
+		DisplayTimedTextToPlayer(owner, 0, 0, 3, \
+			"Engine is too weak. Must be at least " + ENGINE_NAME[min_engine])
 		retval = false
 	}
 	if (chassis_index < min_chassis) {
 		// Chassis is too weak. Inform player
-		if (GetLocalPlayer() == owner) {
-			DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 3, \
-				"Chassis is too weak. Must be at least " + CHASSIS_NAME[min_chassis])
-		}
+		DisplayTimedTextToPlayer(owner, 0, 0, 3, \
+			"Chassis is too weak. Must be at least " + CHASSIS_NAME[min_chassis])
 		retval = false
 	}
 	owner = null
@@ -56,7 +52,6 @@ void Mechanic_Recipe_Actions() {
 	int vehicle = 0
 	int i
 	
-	
 	i = 0
 	// Find out what type of engine is in slot 1 or 2
 	while (i < ENGINE_NUM) {
@@ -65,6 +60,7 @@ void Mechanic_Recipe_Actions() {
 			engine_index = i
 			break
 		}
+		i++
 	}
 	
 	i = 0
@@ -75,19 +71,17 @@ void Mechanic_Recipe_Actions() {
 			chassis_index = i
 			break
 		}
+		i++
 	}
 	
 	// Ensure that a valid engine and a chassis are registered
 	if (engine_index < 0 || chassis_index < 0) {
-		if (GetLocalPlayer() == owner) {
-			DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 3, \
-				"Ensure a chassis and engine are in the first two slots.")
-		}
+		DisplayTimedTextToPlayer(owner, 0, 0, 3, \
+			"Ensure a chassis and engine are in the top two slots.")
 		return
 	}
 	
 	location point = GetUnitLoc(GetTriggerUnit())
-	
 	if (recipe == BLUEPRINTS_JEEP) { // JEEP
 		CreateUnitAtLoc(owner, VEHICLE_JEEP, point, bj_UNIT_FACING)
 	} elseif (recipe == BLUEPRINTS_HUMVEE) { // HUMVEE

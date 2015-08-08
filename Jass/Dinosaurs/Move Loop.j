@@ -1,6 +1,6 @@
 scope MoveLoop
-	real DIST_MULT = 0.4
-	int RAND_RADIUS = 800
+	real DIST_MULT = 0.3
+	int RAND_RADIUS = 1000
 	int MOVE_FREQUENCY = 10
 	
 	unit survivor

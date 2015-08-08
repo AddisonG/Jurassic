@@ -139,7 +139,8 @@ void Setup_Mechanic() {
 }
 
 //===========================================================================
-void InitTrig_Setup_Mechanic() {
+void InitTrig_Mechanic_Init() {
 	trigger t = CreateTrigger()
 	TriggerAddAction(t, function Setup_Mechanic)
+	TriggerRegisterTimerEvent(t, 0.01, false)
 }
