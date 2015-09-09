@@ -1,7 +1,7 @@
 bool Mechanic_Recipe_Conditions() {
 	int recipe = GetItemTypeId(GetManipulatedItem())
 	return \
-		GetUnitTypeId(GetTriggerUnit()) == 'h000' && (\
+		GetUnitTypeId(GetTriggerUnit()) == SURVIVOR_UNIT_TYPE && (\
 		recipe == BLUEPRINTS_JEEP || \
 		recipe == BLUEPRINTS_HUMVEE || \
 		recipe == BLUEPRINTS_TANK || \

@@ -29,6 +29,17 @@ globals
 	button array DIFFICULTY_BUTTONS
 	
 	hashtable FOGMODS = InitHashtable()
+	
+	constant int SURVIVOR_UNIT_TYPE = 'h000'
+	
+	// Damage types
+	constant attacktype AMMUNITION = ATTACK_TYPE_HERO
+	constant attacktype SPIT       = ATTACK_TYPE_MAGIC
+	constant attacktype FIRE       = ATTACK_TYPE_SIEGE
+	constant attacktype BITE       = ATTACK_TYPE_CHAOS
+	constant attacktype CLAW       = ATTACK_TYPE_MELEE
+	constant attacktype ELECTRIC   = ATTACK_TYPE_PIERCE
+	constant attacktype BLUNT      = ATTACK_TYPE_NORMAL
 endglobals
 
 bool Player_Definition() {
@@ -41,7 +52,7 @@ void Player_Setup() {
 	location spawnpoint = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 360))
 	
 	// Spawn a survivor for the player
-	unit survivor = CreateUnitAtLoc(GetEnumPlayer(), 'h000', spawnpoint, GetRandomInt(0, 360))
+	unit survivor = CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, spawnpoint, GetRandomInt(0, 360))
 	RemoveLocation(spawnpoint)
 	spawnpoint = null
 	

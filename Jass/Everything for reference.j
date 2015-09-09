@@ -1,4 +1,12 @@
 globals
+//globals from TextTag:
+constant real MEAN_CHAR_WIDTH=5.5
+constant real MAX_TEXT_SHIFT=200
+constant real DEFAULT_HEIGHT=16
+constant real SIGN_SHIFT=16
+constant real FONT_SIZE=0.024
+constant string MISS="miss"
+//endglobals from TextTag
 rect gg_rct_Cave_East=null
 rect gg_rct_Cave_West=null
 rect gg_rct_Frozen_Lands=null
@@ -28,6 +36,7 @@ rect gg_rct_Tropical_Lands=null
 rect gg_rct_Mountain_Lands=null
 sound gg_snd_Welcome=null
 string gg_snd_Storm_Earth_Fire
+trigger gg_trg_TextTag=null
 trigger gg_trg_Mountain_Cave=null
 trigger gg_trg_Pickup_Drop_Tools=null
 trigger gg_trg_Ping_Base=null
@@ -39,6 +48,7 @@ trigger gg_trg_Begin_Spawn=null
 trigger gg_trg_Anger_Loop=null
 trigger gg_trg_Level_Loop=null
 trigger gg_trg_Spawn_Loop=null
+trigger gg_trg_Move_Loop=null
 trigger gg_trg_Item_Scatter=null
 trigger gg_trg_Spawning_Table=null
 trigger gg_trg_Init=null
@@ -50,21 +60,27 @@ trigger gg_trg_MineSite_Blight=null
 trigger gg_trg_DMineSite_Blight=null
 trigger gg_trg_MineSite_Stop=null
 trigger gg_trg_Mechanic_Init=null
-trigger gg_trg_Mechanic_Recipie=null
+trigger gg_trg_Mechanic_Recipe=null
 trigger gg_trg_Pistol=null
 trigger gg_trg_Tip_Init=null
 trigger gg_trg_Tip_Timer=null
 trigger gg_trg_Tip_Enable=null
 trigger gg_trg_Tip_Disable=null
-location spawn_point
+location SpawnLoop__spawn_point
+location SpawnLoop__survivor_location
+real DIST_MULT=0.3
+integer RAND_RADIUS=1000
+integer MOVE_FREQUENCY=10
+unit survivor
+unit dino
 force PLAYERS=CreateForce()
 group SURVIVORS=CreateGroup()
 group array DINOSAUR_GROUPS
 rect WHOLE_MAP
 timer START_TIMER=CreateTimer()
 timer END_TIMER=CreateTimer()
-timer SPAWN_TIMER=CreateTimer()
 trigger SPAWN_TRIGGER
+trigger MOVE_TRIGGER
 hashtable array DINO_TABLE[10]
 location MAP_CENTER
 integer DIFFICULTY
@@ -77,6 +93,14 @@ real SPAWN_MIN_DIST
 dialog DIFFICULTY_MENU=DialogCreate()
 button array DIFFICULTY_BUTTONS
 hashtable FOGMODS=InitHashtable()
+constant integer SURVIVOR_UNIT_TYPE=0x68303030
+constant attacktype AMMUNITION=ATTACK_TYPE_HERO
+constant attacktype SPIT=ATTACK_TYPE_MAGIC
+constant attacktype FIRE=ATTACK_TYPE_SIEGE
+constant attacktype BITE=ATTACK_TYPE_CHAOS
+constant attacktype CLAW=ATTACK_TYPE_MELEE
+constant attacktype ELECTRIC=ATTACK_TYPE_PIERCE
+constant attacktype BLUNT=ATTACK_TYPE_NORMAL
 integer ENGINE_NUM=7
 string array ENGINE_NAME
 integer array ENGINE_LIST
@@ -102,12 +126,126 @@ integer VEHICLE_TANK=0x68303048
 integer VEHICLE_COBRA=0x6E303039
 integer VEHICLE_TRANSPORT=0x6E303035
 integer VEHICLE_AAHELI=0x6E303042
+constant integer PISTOL_DAMAGE=60
+constant integer PISTOL_RANGE=500
+constant integer PISTOL_RELOAD=1000
+constant integer PISTOL_JAM_TIME=5
+constant integer PISTOL_TRAINED_JAM_CHANCE=10
+constant integer PISTOL_UNTRAINED_JAM_CHANCE=25
+constant integer PISTOL_TRAINED_ACCURACY=100
+constant integer PISTOL_UNTRAINED_ACCURACY=80
+constant integer PISTOL_ITEM=0x505F4930
+constant integer PISTOL_ABILITY=0x505F4130
 timer TIP_TIMER=CreateTimer()
 force TIP_PLAYERS=CreateForce()
 integer TIP_NUM=16
 string array TIPS
 
 endglobals
+//library TextTag:
+function TextTag_XY takes real x,real y,string text,string color returns nothing
+local texttag tt=CreateTextTag()
+local real shift=RMinBJ(StringLength(text)*MEAN_CHAR_WIDTH,MAX_TEXT_SHIFT)
+call SetTextTagText(tt,color+text,FONT_SIZE)
+call SetTextTagPos(tt,x-shift,y,DEFAULT_HEIGHT)
+call SetTextTagVelocity(tt,0,0.04)
+call SetTextTagVisibility(tt,true)
+call SetTextTagFadepoint(tt,2.5)
+call SetTextTagLifespan(tt,4)
+call SetTextTagPermanent(tt,false)
+set tt=null
+endfunction
+function TextTag_Unit takes unit whichUnit,string text,string color returns nothing
+local texttag tt=CreateTextTag()
+local real shift=RMinBJ(StringLength(text)*MEAN_CHAR_WIDTH,MAX_TEXT_SHIFT)
+call SetTextTagText(tt,color+text,FONT_SIZE)
+call SetTextTagPos(tt,GetUnitX(whichUnit)-shift,GetUnitY(whichUnit),DEFAULT_HEIGHT)
+call SetTextTagVelocity(tt,0,0.04)
+call SetTextTagVisibility(tt,true)
+call SetTextTagFadepoint(tt,2.5)
+call SetTextTagLifespan(tt,4)
+call SetTextTagPermanent(tt,false)
+set tt=null
+endfunction
+function TextTag_UnitColor takes unit whichUnit,string text,integer red,integer green,integer blue returns nothing
+local texttag tt=CreateTextTag()
+local real shift=RMinBJ(StringLength(text)*MEAN_CHAR_WIDTH,MAX_TEXT_SHIFT)
+call SetTextTagText(tt,text,FONT_SIZE)
+call SetTextTagColor(tt,red,green,blue,255)
+call SetTextTagPos(tt,GetUnitX(whichUnit)-shift,GetUnitY(whichUnit),DEFAULT_HEIGHT)
+call SetTextTagVelocity(tt,0,0.04)
+call SetTextTagVisibility(tt,true)
+call SetTextTagFadepoint(tt,2.5)
+call SetTextTagLifespan(tt,4)
+call SetTextTagPermanent(tt,false)
+set tt=null
+endfunction
+function TextTag_GoldBounty takes unit whichUnit,integer bounty,player killer returns nothing
+local texttag tt=CreateTextTag()
+local string text="+"+I2S(bounty)
+call SetTextTagText(tt,text,FONT_SIZE)
+call SetTextTagPos(tt,GetUnitX(whichUnit)-SIGN_SHIFT,GetUnitY(whichUnit),0)
+call SetTextTagColor(tt,255,220,0,255)
+call SetTextTagVelocity(tt,0,0.03)
+call SetTextTagVisibility(tt,GetLocalPlayer()==killer)
+call SetTextTagFadepoint(tt,2)
+call SetTextTagLifespan(tt,3)
+call SetTextTagPermanent(tt,false)
+set text=null
+set tt=null
+endfunction
+function TextTag_LumberBounty takes unit whichUnit,integer bounty,player killer returns nothing
+local texttag tt=CreateTextTag()
+local string text="+"+I2S(bounty)
+call SetTextTagText(tt,text,FONT_SIZE)
+call SetTextTagPos(tt,GetUnitX(whichUnit)-SIGN_SHIFT,GetUnitY(whichUnit),0)
+call SetTextTagColor(tt,0,200,80,255)
+call SetTextTagVelocity(tt,0,0.03)
+call SetTextTagVisibility(tt,GetLocalPlayer()==killer)
+call SetTextTagFadepoint(tt,2)
+call SetTextTagLifespan(tt,3)
+call SetTextTagPermanent(tt,false)
+set text=null
+set tt=null
+endfunction
+function TextTag_Miss takes unit whichUnit returns nothing
+local texttag tt=CreateTextTag()
+call SetTextTagText(tt,MISS,FONT_SIZE)
+call SetTextTagPos(tt,GetUnitX(whichUnit),GetUnitY(whichUnit),0)
+call SetTextTagColor(tt,255,0,0,255)
+call SetTextTagVelocity(tt,0,0.03)
+call SetTextTagVisibility(tt,true)
+call SetTextTagFadepoint(tt,1)
+call SetTextTagLifespan(tt,3)
+call SetTextTagPermanent(tt,false)
+set tt=null
+endfunction
+function TextTag_Firearm takes unit whichUnit,integer hitChance returns nothing
+local texttag tt=CreateTextTag()
+local string text=I2S(hitChance)+"%"
+if            (hitChance>80) then
+call SetTextTagColor(tt,0,255,0,255)
+elseif(hitChance>60) then
+call SetTextTagColor(tt,210,255,0,255)
+elseif(hitChance>40) then
+call SetTextTagColor(tt,255,240,0,255)
+elseif(hitChance>20) then
+call SetTextTagColor(tt,255,180,0,255)
+else
+call SetTextTagColor(tt,255,0,0,255)
+endif
+call SetTextTagText(tt,text,FONT_SIZE)
+call SetTextTagPos(tt,GetUnitX(whichUnit),GetUnitY(whichUnit),0)
+call SetTextTagVelocity(tt,0,0)
+call SetTextTagVisibility(tt,GetLocalPlayer()==whichUnit)
+call SetTextTagFadepoint(tt,0.3)
+call SetTextTagLifespan(tt,0.5)
+call SetTextTagPermanent(tt,false)
+set text=null
+set tt=null
+endfunction
+
+//library TextTag ends
 function InitGlobals takes nothing returns nothing
 endfunction
 function ItemTable000000_DropItems takes nothing returns nothing
@@ -260,64 +398,64 @@ call TriggerAddAction(t,function ItemTable000001_DropItems)
 endfunction
 function CreateAllItems takes nothing returns nothing
 local integer itemID
-call CreateItem(0x49303034,470.4,0.6)
-call CreateItem(0x49303034,499.0,38.3)
-call CreateItem(0x49303034,459.0,34.7)
-call CreateItem(0x49303034,510.6,5.8)
-call CreateItem(0x49303035,-569.3,-634.6)
-call CreateItem(0x49303035,-531.6,-631.6)
-call CreateItem(0x49303036,-444.9,-629.8)
-call CreateItem(0x49303036,-413.0,-626.6)
-call CreateItem(0x49303037,-321.5,-621.0)
-call CreateItem(0x49303037,-289.3,-621.8)
-call CreateItem(0x49303038,-169.7,-622.9)
-call CreateItem(0x49303038,-201.9,-626.0)
-call CreateItem(0x49303039,-54.8,-629.8)
-call CreateItem(0x49303039,-88.7,-632.9)
-call CreateItem(0x49303041,34.8,-622.0)
-call CreateItem(0x49303041,67.5,-618.8)
-call CreateItem(0x49303042,157.8,-625.2)
-call CreateItem(0x49303042,194.9,-624.1)
-call CreateItem(0x49303044,314.5,4.6)
-call CreateItem(0x49303044,350.3,-2.6)
-call CreateItem(0x49303044,307.9,45.8)
-call CreateItem(0x49303044,339.8,41.8)
-call CreateItem(0x49303045,346.1,263.4)
-call CreateItem(0x49303045,377.1,252.4)
-call CreateItem(0x49303045,349.3,230.9)
-call CreateItem(0x49303045,380.0,220.1)
-call CreateItem(0x49303048,516.6,167.3)
-call CreateItem(0x49303048,551.3,205.3)
-call CreateItem(0x49303048,515.0,202.6)
-call CreateItem(0x49303048,551.3,171.3)
-call CreateItem(0x49303049,-564.9,-515.8)
-call CreateItem(0x49303049,-529.0,-514.6)
-call CreateItem(0x4930304A,-444.5,-512.6)
-call CreateItem(0x4930304A,-408.4,-517.7)
-call CreateItem(0x4930304B,-289.2,-516.5)
-call CreateItem(0x4930304B,-322.2,-517.8)
-call CreateItem(0x4930304C,-162.4,-513.5)
-call CreateItem(0x4930304C,-197.0,-514.7)
-call CreateItem(0x4930304D,-76.9,-505.1)
-call CreateItem(0x4930304D,-43.8,-506.0)
-call CreateItem(0x4930304E,196.9,-506.8)
-call CreateItem(0x4930304E,164.2,-512.6)
-call CreateItem(0x4930304F,47.0,-510.7)
-call CreateItem(0x4930304F,82.8,-511.6)
-call CreateItem(0x49303050,281.3,-504.5)
-call CreateItem(0x49303050,313.6,-505.3)
-call CreateItem(0x49303051,283.6,-365.9)
-call CreateItem(0x49303051,306.0,-334.0)
-call CreateItem(0x49303052,182.8,-314.4)
-call CreateItem(0x49303052,169.1,-348.8)
-call CreateItem(0x49303053,317.9,-241.8)
-call CreateItem(0x49303053,339.7,-209.6)
-call CreateItem(0x49303054,75.2,-352.5)
-call CreateItem(0x49303054,89.4,-314.1)
-call CreateItem(0x49303055,225.4,-211.0)
-call CreateItem(0x49303055,205.0,-236.7)
-call CreateItem(0x49303056,93.7,-216.4)
-call CreateItem(0x49303056,116.6,-192.8)
+call CreateItem(0x49303034,177.8,375.0)
+call CreateItem(0x49303034,216.5,408.9)
+call CreateItem(0x49303034,174.0,408.0)
+call CreateItem(0x49303034,212.5,376.0)
+call CreateItem(0x49303035,-408.4,529.8)
+call CreateItem(0x49303035,-370.7,532.8)
+call CreateItem(0x49303036,-284.0,534.6)
+call CreateItem(0x49303036,-252.1,537.7)
+call CreateItem(0x49303037,-160.6,543.4)
+call CreateItem(0x49303037,-128.4,542.6)
+call CreateItem(0x49303038,-8.8,541.5)
+call CreateItem(0x49303038,-41.0,538.3)
+call CreateItem(0x49303039,106.1,534.6)
+call CreateItem(0x49303039,72.2,531.4)
+call CreateItem(0x49303041,195.7,542.3)
+call CreateItem(0x49303041,228.4,545.5)
+call CreateItem(0x49303042,318.7,539.2)
+call CreateItem(0x49303042,355.8,540.3)
+call CreateItem(0x49303044,78.7,380.4)
+call CreateItem(0x49303044,116.2,378.1)
+call CreateItem(0x49303044,79.8,414.6)
+call CreateItem(0x49303044,112.4,413.5)
+call CreateItem(0x49303045,-14.5,407.8)
+call CreateItem(0x49303045,19.0,406.8)
+call CreateItem(0x49303045,-11.3,375.2)
+call CreateItem(0x49303045,21.9,374.5)
+call CreateItem(0x49303048,292.1,383.3)
+call CreateItem(0x49303048,324.1,414.4)
+call CreateItem(0x49303048,290.5,418.5)
+call CreateItem(0x49303048,324.4,382.3)
+call CreateItem(0x49303049,-404.0,648.6)
+call CreateItem(0x49303049,-368.1,649.8)
+call CreateItem(0x4930304A,-283.6,651.8)
+call CreateItem(0x4930304A,-247.5,646.7)
+call CreateItem(0x4930304B,-128.3,647.8)
+call CreateItem(0x4930304B,-161.3,646.6)
+call CreateItem(0x4930304C,-1.5,650.9)
+call CreateItem(0x4930304C,-36.1,649.7)
+call CreateItem(0x4930304D,84.1,659.2)
+call CreateItem(0x4930304D,117.1,658.4)
+call CreateItem(0x4930304E,357.8,657.6)
+call CreateItem(0x4930304E,325.1,651.8)
+call CreateItem(0x4930304F,207.9,653.7)
+call CreateItem(0x4930304F,243.7,652.8)
+call CreateItem(0x49303050,442.2,659.9)
+call CreateItem(0x49303050,474.5,659.0)
+call CreateItem(0x49303051,-212.3,261.9)
+call CreateItem(0x49303051,-189.9,293.7)
+call CreateItem(0x49303052,-307.8,298.4)
+call CreateItem(0x49303052,-326.8,270.9)
+call CreateItem(0x49303053,-199.5,386.4)
+call CreateItem(0x49303053,-177.7,418.6)
+call CreateItem(0x49303054,-430.6,269.3)
+call CreateItem(0x49303054,-408.5,293.5)
+call CreateItem(0x49303055,-292.0,409.1)
+call CreateItem(0x49303055,-312.4,383.4)
+call CreateItem(0x49303056,-423.7,395.7)
+call CreateItem(0x49303056,-400.8,419.3)
 endfunction
 function CreateUnitsForPlayer0 takes nothing returns nothing
 local player p=Player(0)
@@ -325,33 +463,34 @@ local unit u
 local integer unitID
 local trigger t
 local real life
-set u=CreateUnit(p,0x64305F33,2283.7,-472.2,270.000)
-set u=CreateUnit(p,0x6830304C,-371.7,688.4,305.041)
-set u=CreateUnit(p,0x64315F30,1744.5,-775.2,270.000)
-set u=CreateUnit(p,0x64305F30,1749.7,-478.2,270.000)
-set u=CreateUnit(p,0x64315F31,1957.2,-772.9,270.000)
+set u=CreateUnit(p,0x64305F33,2463.3,676.9,270.000)
+set u=CreateUnit(p,0x6830304C,-342.4,872.2,305.041)
+set u=CreateUnit(p,0x64315F30,1924.1,373.9,270.000)
+set u=CreateUnit(p,0x64305F30,1929.3,670.8,270.000)
+set u=CreateUnit(p,0x64315F31,2136.8,376.2,270.000)
 call SetUnitState(u,UNIT_STATE_MANA,0)
-set u=CreateUnit(p,0x64305F32,2149.7,-465.2,270.000)
+set u=CreateUnit(p,0x64305F32,2329.3,683.8,270.000)
 call SetUnitColor(u,ConvertPlayerColor(12))
-set u=CreateUnit(p,0x64305F31,1963.4,-478.7,270.000)
-set u=CreateUnit(p,0x64315F32,2146.0,-758.5,270.000)
+set u=CreateUnit(p,0x64305F31,2143.0,670.3,270.000)
+set u=CreateUnit(p,0x64315F32,2325.6,390.5,270.000)
 call SetUnitColor(u,ConvertPlayerColor(0))
-set u=CreateUnit(p,0x64315F33,2299.8,-749.6,270.000)
-set u=CreateUnit(p,0x64335F30,1726.7,-1454.3,270.000)
-set u=CreateUnit(p,0x64335F33,2321.9,-1451.7,270.000)
-set u=CreateUnit(p,0x64325F30,1736.5,-1111.1,270.000)
-set u=CreateUnit(p,0x64325F31,1959.1,-1116.7,270.000)
-set u=CreateUnit(p,0x64325F32,2155.9,-1448.9,270.000)
-set u=CreateUnit(p,0x64325F33,2307.4,-1121.8,270.000)
-set u=CreateUnit(p,0x6830304D,-267.3,726.9,295.035)
-set u=CreateUnit(p,0x6830304E,-163.2,736.5,285.468)
-set u=CreateUnit(p,0x68303044,-42.3,749.2,273.633)
-set u=CreateUnit(p,0x6830304F,62.2,745.2,263.352)
-set u=CreateUnit(p,0x68303045,165.3,742.2,253.516)
-set u=CreateUnit(p,0x6830304A,273.3,725.5,243.534)
-set u=CreateUnit(p,0x6830304B,369.1,681.1,233.997)
-set u=CreateUnit(p,0x64335F32,2146.9,-1110.2,270.000)
-set u=CreateUnit(p,0x64335F31,1961.6,-1445.7,270.000)
+set u=CreateUnit(p,0x64315F33,2479.4,399.4,270.000)
+set u=CreateUnit(p,0x64335F30,1906.3,-305.3,270.000)
+set u=CreateUnit(p,0x64335F33,2501.5,-302.7,270.000)
+set u=CreateUnit(p,0x68303048,659.8,477.2,306.079)
+set u=CreateUnit(p,0x64325F30,1916.1,37.9,270.000)
+set u=CreateUnit(p,0x64325F31,2138.7,32.3,270.000)
+set u=CreateUnit(p,0x64325F32,2335.5,-299.9,270.000)
+set u=CreateUnit(p,0x64325F33,2487.0,27.2,270.000)
+set u=CreateUnit(p,0x6830304D,-238.0,910.6,295.035)
+set u=CreateUnit(p,0x6830304E,-133.9,920.3,285.468)
+set u=CreateUnit(p,0x68303044,-13.1,933.0,273.633)
+set u=CreateUnit(p,0x6830304F,91.5,928.9,263.352)
+set u=CreateUnit(p,0x68303045,194.5,926.0,253.516)
+set u=CreateUnit(p,0x6830304A,302.6,909.3,243.534)
+set u=CreateUnit(p,0x6830304B,398.3,864.8,233.997)
+set u=CreateUnit(p,0x64335F32,2326.5,38.8,270.000)
+set u=CreateUnit(p,0x64335F31,2141.3,-296.6,270.000)
 endfunction
 function CreateUnitsForPlayer11 takes nothing returns nothing
 local player p=Player(11)
@@ -459,6 +598,15 @@ if            (targeted_player_index<1 or targeted_player_index>7) then
 return         false
 endif
 return         true
+endfunction
+function Hit_Chance takes real distance,integer effectiveRange,integer accuracy returns real
+if            (distance<=effectiveRange) then
+return         accuracy
+endif
+if            (distance>=effectiveRange*2) then
+return         0
+endif
+return         Cos((distance-effectiveRange)/(effectiveRange*bj_PI/10))*(accuracy/2)+(accuracy/2)
 endfunction
 function Trig_Mountain_Cave_Conditions takes nothing returns boolean
 return         IsUnitType(GetTriggerUnit(),UNIT_TYPE_GROUND)
@@ -628,7 +776,7 @@ call TriggerAddCondition(t,Condition(function Sharing_Conditions))
 call TriggerAddAction(t,function Unshare_Actions)
 endfunction
 function Survivor_Death_Conditions takes nothing returns boolean
-return         GetUnitTypeId(GetTriggerUnit())==0x68303030
+return         GetUnitTypeId(GetTriggerUnit())==SURVIVOR_UNIT_TYPE
 endfunction
 function Survivor_Death_Actions takes nothing returns nothing
 call GroupRemoveUnit(SURVIVORS,GetTriggerUnit())
@@ -636,7 +784,6 @@ if            (IsUnitGroupEmptyBJ(SURVIVORS)) then
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,20,"Everybody loose.")
 call PauseTimer(ANGER_TIMER)
 call PauseTimer(LEVEL_TIMER)
-call PauseTimer(SPAWN_TIMER)
 call PauseTimer(END_TIMER)
 call FogEnable(false)
 call FogMaskEnable(false)
@@ -661,6 +808,7 @@ set DINO_LEVEL=0
 set DINO_ANGER=0
 call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"The dinosaurs approach...")
 call EnableTrigger(SPAWN_TRIGGER)
+call EnableTrigger(MOVE_TRIGGER)
 call TimerStart(LEVEL_TIMER,180+(20*DIFFICULTY),true,null)
 call TimerStart(ANGER_TIMER,115+(15*DIFFICULTY),true,null)
 call DestroyTrigger(GetTriggeringTrigger())
@@ -672,7 +820,7 @@ call TriggerAddAction(t,function Begin_Spawn_Actions)
 endfunction
 function Anger_Loop_Actions takes nothing returns nothing
 set DINO_ANGER=DINO_ANGER+1
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"The dinosaurs have grown more ferocious... ["+I2S(DINO_ANGER)+"]")
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"The dinosaurs have grown more ferocious... (Ferocity "+I2S(DINO_ANGER)+")")
 endfunction
 function InitTrig_Anger_Loop takes nothing returns nothing
 local trigger t=CreateTrigger()
@@ -681,66 +829,103 @@ call TriggerAddAction(t,function Anger_Loop_Actions)
 endfunction
 function Level_Loop_Actions takes nothing returns nothing
 set DINO_LEVEL=DINO_LEVEL+1
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"Larger dinosaurs are approaching... ["+I2S(DINO_LEVEL)+"]")
+call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,5,"Larger dinosaurs are approaching... (Level "+I2S(DINO_LEVEL)+")")
 endfunction
 function InitTrig_Level_Loop takes nothing returns nothing
 local trigger t=CreateTrigger()
 call TriggerRegisterTimerExpireEvent(t,LEVEL_TIMER)
 call TriggerAddAction(t,function Level_Loop_Actions)
 endfunction
-function Proximity_Check takes location survivor_location returns boolean
-local real x_diff_sqrd=Pow(GetLocationX(spawn_point)-GetLocationX(survivor_location),2)
-local real y_diff_sqrd=Pow(GetLocationY(spawn_point)-GetLocationY(survivor_location),2)
+// scope SpawnLoop begins
+function Proximity_Check takes nothing returns boolean
+local real x_diff_sqrd=Pow(GetLocationX(SpawnLoop__spawn_point)-GetLocationX(SpawnLoop__survivor_location),2)
+local real y_diff_sqrd=Pow(GetLocationY(SpawnLoop__spawn_point)-GetLocationY(SpawnLoop__survivor_location),2)
 return         SquareRoot(x_diff_sqrd+y_diff_sqrd)>=SPAWN_MIN_DIST
 endfunction
 function Verify_Point takes nothing returns nothing
-local location survivor_location=GetUnitLoc(GetEnumUnit())
-if            (spawn_point!=null and  not Proximity_Check(survivor_location)) then
+if            (SpawnLoop__spawn_point!=null and  not Proximity_Check()) then
 set SPAWN_MAX_DIST=SPAWN_MAX_DIST*0.96+200
-call RemoveLocation(spawn_point)
-set spawn_point=null
+call RemoveLocation(SpawnLoop__spawn_point)
+set SpawnLoop__spawn_point=null
 endif
-set survivor_location=null
 endfunction
 function Spawn_Dinosaur takes nothing returns nothing
-local location survivor_location=GetUnitLoc(GetEnumUnit())
 local boolean pathable
-local integer dino_type=GetRandomInt(0,100)
+local integer dino_type=GetRandomInt(1,100)
 local integer i=0
 local unit dino
+set SpawnLoop__survivor_location=GetUnitLoc(GetEnumUnit())
 set SPAWN_MAX_DIST=SPAWN_MIN_DIST+3000
 loop
-set spawn_point=PolarProjectionBJ(survivor_location,GetRandomReal(SPAWN_MIN_DIST,SPAWN_MAX_DIST),GetRandomReal(0,360))
-set pathable=IsTerrainPathable(GetLocationX(spawn_point),GetLocationY(spawn_point),PATHING_TYPE_WALKABILITY)
-set pathable=pathable and RectContainsCoords(WHOLE_MAP,GetLocationX(spawn_point),GetLocationY(spawn_point))
+set SpawnLoop__spawn_point=PolarProjectionBJ(SpawnLoop__survivor_location,GetRandomReal(SPAWN_MIN_DIST,SPAWN_MAX_DIST),GetRandomReal(0,359))
+set pathable=IsTerrainPathable(GetLocationX(SpawnLoop__spawn_point),GetLocationY(SpawnLoop__spawn_point),PATHING_TYPE_WALKABILITY)
+set pathable=pathable and RectContainsCoords(WHOLE_MAP,GetLocationX(SpawnLoop__spawn_point),GetLocationY(SpawnLoop__spawn_point))
 if            (pathable) then
 call ForGroup(SURVIVORS,function Verify_Point)
-exitwhen       spawn_point!=null
+exitwhen       SpawnLoop__spawn_point!=null
 endif
 set SPAWN_MAX_DIST=SPAWN_MAX_DIST*0.96+200
 endloop
-call RemoveLocation(survivor_location)
-set survivor_location=null
+call RemoveLocation(SpawnLoop__survivor_location)
+set SpawnLoop__survivor_location=null
 loop
 exitwhen  not(dino_type>LoadInteger(DINO_TABLE[DINO_LEVEL],i,0))
 set dino_type=dino_type-(LoadInteger(DINO_TABLE[DINO_LEVEL],i,0))
 set i=i+1
 endloop
-set dino=CreateUnitAtLoc(Player(11),LoadInteger(DINO_TABLE[DINO_LEVEL],i,1),spawn_point,GetRandomReal(0,360))
+set dino=CreateUnitAtLoc(Player(11),LoadInteger(DINO_TABLE[DINO_LEVEL],i,1),SpawnLoop__spawn_point,GetRandomReal(0,360))
+call RemoveGuardPosition(dino)
 call GroupAddUnit(DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(GetEnumUnit()))],dino)
 set dino=null
-call RemoveLocation(spawn_point)
-set spawn_point=null
+call RemoveLocation(SpawnLoop__spawn_point)
+set SpawnLoop__spawn_point=null
 endfunction
 function Spawn_Loop_Actions takes nothing returns nothing
 call ForGroup(SURVIVORS,function Spawn_Dinosaur)
 endfunction
+// scope SpawnLoop ends
 function InitTrig_Spawn_Loop takes nothing returns nothing
 set SPAWN_TRIGGER=CreateTrigger()
 call DisableTrigger(SPAWN_TRIGGER)
 call TriggerRegisterTimerEvent(SPAWN_TRIGGER,5,true)
 call TriggerAddAction(SPAWN_TRIGGER,function Spawn_Loop_Actions)
 endfunction
+// scope MoveLoop begins
+function Move_Dinosaur takes nothing returns nothing
+local location survivor_location
+local location dino_location
+local real distance
+local location destination
+set dino=GetEnumUnit()
+set survivor_location=GetUnitLoc(survivor)
+set dino_location=GetUnitLoc(dino)
+set distance=DistanceBetweenPoints(dino_location,survivor_location)
+set destination=PolarProjectionBJ(dino_location,distance*DIST_MULT,AngleBetweenPoints(dino_location,survivor_location))
+set destination=PolarProjectionBJ(destination,RAND_RADIUS,GetRandomInt(0,360))
+call IssuePointOrderLoc(dino,"attack",destination)
+call RemoveLocation(survivor_location)
+call RemoveLocation(dino_location)
+call RemoveLocation(destination)
+set survivor_location=null
+set dino_location=null
+set destination=null
+endfunction
+function Move_Survivors_Dinosaurs takes nothing returns nothing
+local group dinosaurs
+set survivor=GetEnumUnit()
+set dinosaurs=DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(survivor))]
+call ForGroup(dinosaurs,function Move_Dinosaur)
+endfunction
+function Move_All_Dinosaurs takes nothing returns nothing
+call ForGroup(SURVIVORS,function Move_Survivors_Dinosaurs)
+endfunction
+function InitTrig_Move_Loop takes nothing returns nothing
+set MOVE_TRIGGER=CreateTrigger()
+call DisableTrigger(MOVE_TRIGGER)
+call TriggerRegisterTimerEvent(MOVE_TRIGGER,MOVE_FREQUENCY,true)
+call TriggerAddAction(MOVE_TRIGGER,function Move_All_Dinosaurs)
+endfunction
+// scope MoveLoop ends
 function Item_Scatter_Actions takes nothing returns nothing
 local location temp
 local integer i=0
@@ -831,8 +1016,8 @@ function Player_Definition takes nothing returns boolean
 return        (GetPlayerController(GetFilterPlayer())==MAP_CONTROL_USER) and (GetPlayerSlotState(GetFilterPlayer())==PLAYER_SLOT_STATE_PLAYING)
 endfunction
 function Player_Setup takes nothing returns nothing
-local location spawnpoint=PolarProjectionBJ(MAP_CENTER,GetRandomReal(0,300),GetRandomReal(0,360))
-local unit survivor=CreateUnitAtLoc(GetEnumPlayer(),0x68303030,spawnpoint,GetRandomReal(0,360))
+local location spawnpoint=PolarProjectionBJ(MAP_CENTER,GetRandomInt(0,300),GetRandomInt(0,360))
+local unit survivor=CreateUnitAtLoc(GetEnumPlayer(),SURVIVOR_UNIT_TYPE,spawnpoint,GetRandomInt(0,360))
 call RemoveLocation(spawnpoint)
 set spawnpoint=null
 call GroupAddUnit(SURVIVORS,survivor)
@@ -1127,24 +1312,21 @@ endfunction
 function InitTrig_Mechanic_Init takes nothing returns nothing
 local trigger t=CreateTrigger()
 call TriggerAddAction(t,function Setup_Mechanic)
+call TriggerRegisterTimerEvent(t,0.01,false)
 endfunction
 function Mechanic_Recipe_Conditions takes nothing returns boolean
 local integer recipe=GetItemTypeId(GetManipulatedItem())
-return         recipe==BLUEPRINTS_JEEP or recipe==BLUEPRINTS_HUMVEE or recipe==BLUEPRINTS_TANK or recipe==BLUEPRINTS_COBRA or recipe==BLUEPRINTS_TRANSPORT or recipe==BLUEPRINTS_AAHELI
+return         GetUnitTypeId(GetTriggerUnit())==0x68303030 and (recipe==BLUEPRINTS_JEEP or recipe==BLUEPRINTS_HUMVEE or recipe==BLUEPRINTS_TANK or recipe==BLUEPRINTS_COBRA or recipe==BLUEPRINTS_TRANSPORT or recipe==BLUEPRINTS_AAHELI)
 endfunction
 function checkEngineAndChassis takes integer engine_index,integer min_engine,integer chassis_index,integer min_chassis returns boolean
 local player owner=GetOwningPlayer(GetTriggerUnit())
 local boolean retval=true
 if            (engine_index<min_engine) then
-if            (GetLocalPlayer()==owner) then
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,3,"Engine is too weak. Must be at least "+ENGINE_NAME[min_engine])
-endif
+call DisplayTimedTextToPlayer(owner,0,0,3,"Engine is too weak. Must be at least "+ENGINE_NAME[min_engine])
 set retval=false
 endif
 if            (chassis_index<min_chassis) then
-if            (GetLocalPlayer()==owner) then
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,3,"Chassis is too weak. Must be at least "+CHASSIS_NAME[min_chassis])
-endif
+call DisplayTimedTextToPlayer(owner,0,0,3,"Chassis is too weak. Must be at least "+CHASSIS_NAME[min_chassis])
 set retval=false
 endif
 set owner=null
@@ -1165,6 +1347,7 @@ if            (GetItemTypeId(UnitItemInSlot(GetTriggerUnit(),0))==ENGINE_LIST[i]
 set engine_index=i
 exitwhen       true
 endif
+set i=i+1
 endloop
 set i=0
 loop
@@ -1173,11 +1356,10 @@ if            (GetItemTypeId(UnitItemInSlot(GetTriggerUnit(),0))==CHASSIS_LIST[i
 set chassis_index=i
 exitwhen       true
 endif
+set i=i+1
 endloop
 if            (engine_index<0 or chassis_index<0) then
-if            (GetLocalPlayer()==owner) then
-call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,3,"Ensure a chassis and engine are in the first two slots.")
-endif
+call DisplayTimedTextToPlayer(owner,0,0,3,"Ensure a chassis and engine are in the top two slots.")
 return        
 endif
 set point=GetUnitLoc(GetTriggerUnit())
@@ -1222,20 +1404,44 @@ call TriggerRegisterAnyUnitEventBJ(t,EVENT_PLAYER_UNIT_USE_ITEM)
 call TriggerAddCondition(t,Condition(function Mechanic_Recipe_Conditions))
 call TriggerAddAction(t,function Mechanic_Recipe_Actions)
 endfunction
-function Trig_Pistol_Conditions takes nothing returns boolean
-if            (not(GetItemTypeId(GetManipulatedItem())==0x49303057))then
-return         false
-endif
-return         true
+function Pistol_Conditions takes nothing returns boolean
+return         GetItemTypeId(GetManipulatedItem())==PISTOL_ITEM and GetUnitTypeId(GetTriggerUnit())==SURVIVOR_UNIT_TYPE
 endfunction
-function Trig_Pistol_Actions takes nothing returns nothing
-call UnitDamageTargetBJ(GetTriggerUnit(),GetEventTargetUnit(),60.00,ATTACK_TYPE_MELEE,DAMAGE_TYPE_NORMAL)
+function Pistol_Actions takes nothing returns nothing
+local unit survivor=GetTriggerUnit()
+local unit target=GetEventTargetUnit()
+local location survivor_location=GetUnitLoc(survivor)
+local location target_location=GetUnitLoc(target)
+local real distance=DistanceBetweenPoints(target_location,survivor_location)
+local real hitChance
+local integer jamChance
+call RemoveLocation(survivor_location)
+call RemoveLocation(target_location)
+set survivor_location=null
+set target_location=null
+if            (GetUnitAbilityLevel(survivor,PISTOL_ABILITY)>=1) then
+set hitChance=Hit_Chance(distance,PISTOL_RANGE,PISTOL_TRAINED_ACCURACY)
+set jamChance=PISTOL_TRAINED_JAM_CHANCE
+else
+set hitChance=Hit_Chance(distance,PISTOL_RANGE,PISTOL_UNTRAINED_ACCURACY)
+set jamChance=PISTOL_UNTRAINED_JAM_CHANCE
+endif
+if            (jamChance>=GetRandomInt(1,100)) then
+call TextTag_UnitColor(survivor,"Jammed!",255,0,0)
+return        
+endif
+call TextTag_Firearm(survivor,R2I(hitChance))
+if            (hitChance<GetRandomInt(1,100)) then
+call TextTag_Miss(target)
+return        
+endif
+call UnitDamageTarget(survivor,target,PISTOL_DAMAGE,false,true,AMMUNITION,DAMAGE_TYPE_NORMAL,WEAPON_TYPE_WHOKNOWS)
 endfunction
 function InitTrig_Pistol takes nothing returns nothing
-set gg_trg_Pistol=CreateTrigger()
-call TriggerRegisterAnyUnitEventBJ(gg_trg_Pistol,EVENT_PLAYER_UNIT_USE_ITEM)
-call TriggerAddCondition(gg_trg_Pistol,Condition(function Trig_Pistol_Conditions))
-call TriggerAddAction(gg_trg_Pistol,function Trig_Pistol_Actions)
+local trigger t=CreateTrigger()
+call TriggerRegisterAnyUnitEventBJ(t,EVENT_PLAYER_UNIT_USE_ITEM)
+call TriggerAddCondition(t,Condition(function Pistol_Conditions))
+call TriggerAddAction(t,function Pistol_Actions)
 endfunction
 function Show_Tip takes nothing returns nothing
 call DisplayTimedTextToForce(TIP_PLAYERS,5,TIPS[GetRandomInt(0,TIP_NUM)])
@@ -1301,6 +1507,7 @@ call TriggerRegisterPlayerChatEvent(t,Player(6),"-notips",true)
 call TriggerAddAction(t,function Tip_Disable_Actions)
 endfunction
 function InitCustomTriggers takes nothing returns nothing
+call InitTrig_TextTag()
 call InitTrig_Mountain_Cave()
 call InitTrig_Pickup_Drop_Tools()
 call InitTrig_Ping_Base()
@@ -1312,6 +1519,7 @@ call InitTrig_Begin_Spawn()
 call InitTrig_Anger_Loop()
 call InitTrig_Level_Loop()
 call InitTrig_Spawn_Loop()
+call InitTrig_Move_Loop()
 call InitTrig_Item_Scatter()
 call InitTrig_Spawning_Table()
 call InitTrig_Init()
@@ -1323,17 +1531,12 @@ call InitTrig_MineSite_Blight()
 call InitTrig_DMineSite_Blight()
 call InitTrig_MineSite_Stop()
 call InitTrig_Mechanic_Init()
-call InitTrig_Mechanic_Recipie()
+call InitTrig_Mechanic_Recipe()
 call InitTrig_Pistol()
 call InitTrig_Tip_Init()
 call InitTrig_Tip_Timer()
 call InitTrig_Tip_Enable()
 call InitTrig_Tip_Disable()
-endfunction
-function RunInitializationTriggers takes nothing returns nothing
-call ConditionalTriggerExecute(gg_trg_Spawning_Table)
-call ConditionalTriggerExecute(gg_trg_Init)
-call ConditionalTriggerExecute(gg_trg_Mechanic_Init)
 endfunction
 function InitCustomPlayerSlots takes nothing returns nothing
 call SetPlayerStartLocation(Player(0),0)
@@ -1555,7 +1758,6 @@ call InitBlizzard()
 //! initdatastructs
 call InitGlobals()
 call InitCustomTriggers()
-call RunInitializationTriggers()
 endfunction
 function config takes nothing returns nothing
 call SetMapName("TRIGSTR_001")

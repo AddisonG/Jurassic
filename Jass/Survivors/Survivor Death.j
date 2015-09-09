@@ -1,6 +1,6 @@
 bool Survivor_Death_Conditions() {
 	// Return true if unit was a survivor
-	return GetUnitTypeId(GetTriggerUnit()) == 'h000'
+	return GetUnitTypeId(GetTriggerUnit()) == SURVIVOR_UNIT_TYPE
 }
 
 void Survivor_Death_Actions() {

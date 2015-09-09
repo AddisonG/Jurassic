@@ -4,10 +4,10 @@
  * 
  * This function is shared across all sharing triggers (pshare, fshare, unshare)
  */
-boolean Sharing_Conditions() {
+bool Sharing_Conditions() {
 	// The index of the player to share control with.
 	string message = GetEventPlayerChatString()
-	integer targeted_player_index = S2I(SubString(message, StringLength(message), StringLength(message)))
+	int targeted_player_index = S2I(SubString(message, StringLength(message), StringLength(message)))
 	
 	// Ensure that string entered is <= 10 characters. (longest is "-unshare 1")
 	if (StringLength(GetEventPlayerChatString()) <= 10) {
@@ -27,6 +27,8 @@ boolean Sharing_Conditions() {
 	return true
 }
 
+
+
 real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 	if (distance <= effectiveRange) {
 		// The shot is within the effective range. Accuracy is unchanged
@@ -37,5 +39,6 @@ real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 		return 0
 	}
 	
+	// At this point effectiveRange < distance
 	return Cos((distance - effectiveRange) / (effectiveRange * bj_PI / 10)) * (accuracy / 2) + (accuracy / 2)
 }
