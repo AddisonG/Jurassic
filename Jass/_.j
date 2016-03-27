@@ -42,3 +42,7 @@ real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 	// At this point effectiveRange < distance
 	return Cos((distance - effectiveRange) / (effectiveRange * bj_PI / 10)) * (accuracy / 2) + (accuracy / 2)
 }
+
+bool isSurvivor(unit survivor) {
+	return GetUnitTypeId(survivor) == SURVIVOR_UNIT_TYPE
+}

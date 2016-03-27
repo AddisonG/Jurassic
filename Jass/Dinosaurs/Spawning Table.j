@@ -1,3 +1,11 @@
+struct SpawningTable extends array {
+	// Max of 10 different types of dinosaurs per level
+	int array chance[10]
+	int array dinosaur[10]
+}
+
+
+
 /*
 This is a picture of how the spawning table works: http://i.imgur.com/Rgoxtn0.png
 The values in the first column (0) MUST be at least 100,
@@ -5,6 +13,18 @@ or there will be bad times, as I don't think I added any failsafes.
 */
 
 void Setup_Spawning_Table() {
+	
+	SpawningTable[0].chance[0] = 32
+	SpawningTable[0].chance[1] = 40
+	SpawningTable[0].chance[2] = 14
+	SpawningTable[0].chance[3] = 14
+	SpawningTable[0].dinosaur[0] = 'd0_0'
+	SpawningTable[0].dinosaur[1] = 'd0_1'
+	SpawningTable[0].dinosaur[2] = 'd0_2'
+	SpawningTable[0].dinosaur[3] = 'd0_3'
+	
+	////////// OLD METHOD //////////
+	
 	// LEVEL 1
 	integer VAL = 0
 	integer KEY = 1
