@@ -1,6 +1,7 @@
 scope mechanic {
 	
-	private static final int VEHICLE_CAP = 3
+	private constant int MECHANIC_RESEARCH = 'MECH'
+	private constant int VEHICLE_CAP = 3
 	
 	public struct mechanic {
 		
@@ -15,17 +16,17 @@ scope mechanic {
 		}
 		
 		public void buildVehicle(unit survivor, unittype vehicle) {
-			if (vehicleCount >= VEHICLE_CAP) {
+			if (this.vehicleCount >= VEHICLE_CAP) {
 				// Friendly message
 				return
 			}
 			
-			vehicleCount++
+			this.vehicleCount++
 		}
 		
 		public void destroyVehicle(unit vehicle) {
-			if (vehicleCount > 0) {
-				vehicleCount--
+			if (this.vehicleCount > 0) {
+				this.vehicleCount--
 			}
 		}
 		
@@ -35,7 +36,7 @@ scope mechanic {
 		
 		public static bool isTrained(player owner) {
 			// Check if upgrade is researched
-			return GetPlayerTechCount(owner, '0000', true) >= 1
+			return GetPlayerTechCount(owner, MECHANIC_RESEARCH, true) >= 1
 		}
 	}
 }

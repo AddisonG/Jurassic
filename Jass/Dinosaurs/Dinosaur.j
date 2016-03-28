@@ -2,19 +2,19 @@ scope dinosaur {
 	
 	// The radius of the circle the dinosaur will move to, relative to the 
 	// length of the line between the dinosaur and the target
-	private static final real CIRCLE_RADIUS_PERCENT = 0.40
-	private static final int CIRCLE_RADIUS_MINIMUM = 300
+	private constant real CIRCLE_RADIUS_PERCENT = 0.40
+	private constant int CIRCLE_RADIUS_MINIMUM = 300
 	
 	// The center of the circle the dinosaur will move to, relative to the
 	// target, and the line between the dinosaur and the target
 	// (0 is on the survivor, 1 is on the dinosaur)
-	private static final real CIRCLE_CENTER_DISTANCE_PERCENT = 0.30
-	private static final real CIRCLE_CENTER_DISTANCE_EXTRA = 100
+	private constant real CIRCLE_CENTER_DISTANCE_PERCENT = 0.30
+	private constant real CIRCLE_CENTER_DISTANCE_EXTRA = 100
 	
 	// A time between 0 and MAX_MOVE_DELAY seconds is chosen before the dinosaur
 	// will actually begin its move. This is to prevent dinosaurs from moving at
 	// the same moment if a loop is used to move several at once.
-	private static final real MAX_MOVE_DELAY = 6
+	private constant real MAX_MOVE_DELAY = 6
 	
 	public struct dinosaur {
 		private unit u = null // The dinosaur

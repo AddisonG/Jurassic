@@ -1,5 +1,5 @@
 globals
-	int ENGINE_NUM = 7
+	constant int ENGINE_NUM = 7
 	string array ENGINE_NAME
 	int array ENGINE_LIST
 	int array ENGINE_FUELTANK
@@ -7,26 +7,26 @@ globals
 	int array ENGINE_SPEED
 	int array ENGINE_USAGE
 	
-	int CHASSIS_NUM = 8
+	constant int CHASSIS_NUM = 8
 	string array CHASSIS_NAME
 	int array CHASSIS_LIST
 	int array CHASSIS_ARMOUR
 	int array CHASSIS_HEALTH
 	int array CHASSIS_SPEED
 	
-	int BLUEPRINTS_JEEP = 'I00Q'
-	int BLUEPRINTS_HUMVEE = 'I00R'
-	int BLUEPRINTS_TANK = 'I00S'
-	int BLUEPRINTS_COBRA = 'I00T'
-	int BLUEPRINTS_TRANSPORT = 'I00U'
-	int BLUEPRINTS_AAHELI = 'I00V'
+	constant int BLUEPRINTS_JEEP = 'I00Q'
+	constant int BLUEPRINTS_HUMVEE = 'I00R'
+	constant int BLUEPRINTS_TANK = 'I00S'
+	constant int BLUEPRINTS_COBRA = 'I00T'
+	constant int BLUEPRINTS_TRANSPORT = 'I00U'
+	constant int BLUEPRINTS_AAHELI = 'I00V'
 	
-	int VEHICLE_JEEP = 'h00G'
-	int VEHICLE_HUMVEE = 'h00G' // Haven't made Humvee yet
-	int VEHICLE_TANK = 'h00H'
-	int VEHICLE_COBRA = 'n009'
-	int VEHICLE_TRANSPORT = 'n005'
-	int VEHICLE_AAHELI = 'n00B' // lol, n00b
+	constant int VEHICLE_JEEP = 'h00G'
+	constant int VEHICLE_HUMVEE = 'h00G' // Haven't made Humvee yet
+	constant int VEHICLE_TANK = 'h00H'
+	constant int VEHICLE_COBRA = 'n009'
+	constant int VEHICLE_TRANSPORT = 'n005'
+	constant int VEHICLE_AAHELI = 'n00B' // lol, n00b
 endglobals
 
 void Setup_Mechanic() {

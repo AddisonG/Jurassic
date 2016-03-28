@@ -5,8 +5,8 @@ include "cj_typesEx_priv.j"
 
 globals
 	force PLAYERS = CreateForce()
-	group SURVIVORS = CreateGroup()
-	group array DINOSAUR_GROUPS
+	survivor_survivor array SURVIVORS[7]
+	
 	rect WHOLE_MAP
 	timer START_TIMER = CreateTimer()
 	timer END_TIMER = CreateTimer()
@@ -14,6 +14,7 @@ globals
 	trigger MOVE_TRIGGER
 	
 	hashtable array DINO_TABLE[10]
+	group array DINOSAUR_GROUPS
 	location MAP_CENTER
 	
 	int DIFFICULTY
@@ -52,18 +53,15 @@ void Player_Setup() {
 	location spawnpoint = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 360))
 	
 	// Spawn a survivor for the player
-	unit survivor = CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, spawnpoint, GetRandomInt(0, 360))
-	RemoveLocation(spawnpoint)
-	spawnpoint = null
+	survivor_survivor s = survivor_survivor.create(CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, spawnpoint, GetRandomInt(0, 360)))
 	
 	// Add them to the SURVIVORS group, and select them for the player
-	GroupAddUnit(SURVIVORS, survivor)
+	SURVIVORS[SURVIVORS.length] = s
 	if (GetLocalPlayer() == GetEnumPlayer()) {
 		// Select the unit for the player who owns it
 		ClearSelection()
-		SelectUnit(survivor, true)
+		SelectUnit(s.surv, true)
 	}
-	survivor = null
 	
 	// Create a group for storing the dinosaurs assigned to this player
 	DINOSAUR_GROUPS[GetPlayerId(GetEnumPlayer())] = CreateGroup()
@@ -71,6 +69,10 @@ void Player_Setup() {
 	// Set the player's resources
 	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_GOLD_GATHERED, 1000)
 	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_LUMBER_GATHERED, 1000)
+	
+	RemoveLocation(spawnpoint)
+	spawnpoint = null
+	s = null
 }
 
 void Init_Actions() {
