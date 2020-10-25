@@ -11,14 +11,15 @@ void pingTriggeringPlayerMap(real x, real y) {
 void Trig_Ping_Base_Actions() {
 	// TROPICAL LANDS
 	pingTriggeringPlayerMap(-12700, -15150) // Bottom left, by water, on broken wall
-	pingTriggeringPlayerMap(-14000, -11250) // Left, adjacent triangle walls
-	pingTriggeringPlayerMap(-14800, -9800) // Left, behind triangle walls
+	pingTriggeringPlayerMap(-14400, -6800) // Left, above triangle walls
+	pingTriggeringPlayerMap(-14000, -11250) // Left, below triangle walls
+	pingTriggeringPlayerMap(-14800, -9800) // Left, inside triangle walls
 	pingTriggeringPlayerMap(-8500, -14200) // Bottom, ruins
 	pingTriggeringPlayerMap(-3000, -9000) // Right, sunken ruins
 	pingTriggeringPlayerMap(-3000, -13800) // Bottom right, island
 	pingTriggeringPlayerMap(-7000, -3800) // Top, mountainous ruins
 	pingTriggeringPlayerMap(-3800, -700) // Top right, triple ruins
-	
+
 	// MOUNTAIN LANDS
 	pingTriggeringPlayerMap(10000, 7000) // Center, crater of mounain
 	pingTriggeringPlayerMap(13050, 9050) // Right, entire mountain
@@ -26,11 +27,13 @@ void Trig_Ping_Base_Actions() {
 	pingTriggeringPlayerMap(14500, 2600) // Right, ruins by base of mountain
 	pingTriggeringPlayerMap(14000, -1500) // Bottom right, ruins by river
 	pingTriggeringPlayerMap(10800, -200) // Bottom, sunken area
-	
+
 	// SWAMP LANDS
+	pingTriggeringPlayerMap(7600, -9200) // Middle, pocket by the stone path
 	pingTriggeringPlayerMap(600, -7000) // Left, raised area by paths
-	pingTriggeringPlayerMap(1700, -11000) // Bottom left, on river
-	
+	pingTriggeringPlayerMap(1700, -11000) // Bottom left, left of shipwreck
+	pingTriggeringPlayerMap(4750, -12900) // Bottom, below shipwreck
+
 	// FROZEN LANDS
 }
 

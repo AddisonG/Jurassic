@@ -5,7 +5,7 @@ Removes the ability to Excavate for 2.5 seconds.
 bool MineSite_Stop_Conditions() {
 	// Only true if unit is a Mining Site, and ability is "Stop Mining"
 	return (GetUnitTypeId(GetTriggerUnit()) == 'n003' && \
-		GetSpellAbilityId() == 'A00L')
+		GetSpellAbilityId() == 'A00I')
 }
 
 void MineSite_Stop_Actions() {

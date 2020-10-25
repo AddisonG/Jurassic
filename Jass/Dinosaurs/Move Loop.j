@@ -1,27 +1,30 @@
 scope MoveLoop
 	real DIST_MULT = 0.3
 	int RAND_RADIUS = 1000
-	int MOVE_FREQUENCY = 10
-	
+	int MOVE_FREQUENCY = 12
+
 	unit survivor
 	unit dino
-	
+
 	void Move_Dinosaur() {
 		dino = GetEnumUnit()
-		
+
 		location survivor_location = GetUnitLoc(survivor)
 		location dino_location = GetUnitLoc(dino)
 		real distance = DistanceBetweenPoints(dino_location, survivor_location)
-		
+
 		// Get the point a % of the way between the dino and the survivor
 		location destination = PolarProjectionBJ(dino_location, distance * DIST_MULT, AngleBetweenPoints(dino_location, survivor_location))
-		
+
 		// Make the destination random within a few hundred unit radius. This
 		// helps the dinosaurs to appear to not be "homing" in.
 		destination = PolarProjectionBJ(destination, RAND_RADIUS, GetRandomInt(0, 360))
-		
+
 		IssuePointOrderLoc(dino, "attack", destination)
-		
+
+		// Debugging
+		CreateDestructable('ZZdt', GetLocationX(destination), GetLocationY(destination), 0, 1, 0)
+
 		RemoveLocation(survivor_location)
 		RemoveLocation(dino_location)
 		RemoveLocation(destination)
@@ -29,17 +32,17 @@ scope MoveLoop
 		dino_location = null
 		destination = null
 	}
-	
+
 	void Move_Survivors_Dinosaurs() {
 		survivor = GetEnumUnit()
 		group dinosaurs = DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(survivor))]
 		ForGroup(dinosaurs, function Move_Dinosaur)
 	}
-	
+
 	void Move_All_Dinosaurs() {
-		ForGroup(SURVIVORS, function Move_Survivors_Dinosaurs)
+		ForGroup(SURVIVOR_GROUP, function Move_Survivors_Dinosaurs)
 	}
-	
+
 	//===========================================================================
 	void InitTrig_Move_Loop() {
 		MOVE_TRIGGER = CreateTrigger()

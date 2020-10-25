@@ -4,17 +4,22 @@ bool Survivor_Death_Conditions() {
 }
 
 void Survivor_Death_Actions() {
-	GroupRemoveUnit(SURVIVORS, GetTriggerUnit())
-	if (IsUnitGroupEmptyBJ(SURVIVORS)) {
+	debug BJDebugMsg("Survivor_Death_Actions")
+	SURVIVORS[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))].deathActions()
+
+	GroupRemoveUnit(SURVIVOR_GROUP, GetTriggerUnit())
+	RemoveUnit(GetTriggerUnit())
+
+	if (IsUnitGroupEmptyBJ(SURVIVOR_GROUP)) {
 		DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 20, "Everybody loose.")
-		
+
 		// Maybe I should just pause the game?
-		
+
 		// Pause all timers
 		PauseTimer(ANGER_TIMER)
 		PauseTimer(LEVEL_TIMER)
 		PauseTimer(END_TIMER)
-		
+
 		// Reveal map
 		FogEnable(false)
 		FogMaskEnable(false)
@@ -25,6 +30,7 @@ void Survivor_Death_Actions() {
 
 //===========================================================================
 void InitTrig_Survivor_Death() {
+	debug BJDebugMsg("InitTrig_Survivor_Death")
 	trigger t = CreateTrigger()
 	TriggerRegisterPlayerUnitEvent(t, Player(0), EVENT_PLAYER_UNIT_DEATH, null)
 	TriggerRegisterPlayerUnitEvent(t, Player(1), EVENT_PLAYER_UNIT_DEATH, null)
@@ -33,7 +39,7 @@ void InitTrig_Survivor_Death() {
 	TriggerRegisterPlayerUnitEvent(t, Player(4), EVENT_PLAYER_UNIT_DEATH, null)
 	TriggerRegisterPlayerUnitEvent(t, Player(5), EVENT_PLAYER_UNIT_DEATH, null)
 	TriggerRegisterPlayerUnitEvent(t, Player(6), EVENT_PLAYER_UNIT_DEATH, null)
-	
+
 	TriggerAddCondition(t, Condition(function Survivor_Death_Conditions))
 	TriggerAddAction(t, function Survivor_Death_Actions)
 }

@@ -52,20 +52,21 @@ scope SpawnLoop
 		if (spawn_point != null && !Proximity_Check()) {
 			// Point was too close to a survivor. Increase MaxDistance, to approach 5'000
 			SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
-			
+
 			// This point has been proved invalid. Free it.
 			RemoveLocation(spawn_point)
 			spawn_point = null
-			
+
 			// We have failed, while inside of a ForGroup().
 			// By setting the global variable 'spawn_point' to null, we can let our caller know we failed.
 		}
 	}
 
 	void Spawn_Dinosaur() {
+		debug BJDebugMsg("Spawn_Dinosaur")
 		// Don't merge this line
 		survivor_location = GetUnitLoc(GetEnumUnit())
-		
+
 		// MaxDistance is set to the MinDistance + 3000. This makes a donut shape
 		// in which dinosaurs will spawn. MinDistance is static, and is set according
 		// to difficulty. MaxDistance increases slightly every time spawning a
@@ -76,31 +77,31 @@ scope SpawnLoop
 			// Get a random point.
 			spawn_point = PolarProjectionBJ(survivor_location, \
 				GetRandomReal(SPAWN_MIN_DIST, SPAWN_MAX_DIST), GetRandomReal(0, 359))
-			
+
 			// Ensure it is pathable, and inside map
 			bool pathable = IsTerrainPathable(GetLocationX(spawn_point), GetLocationY(spawn_point), PATHING_TYPE_WALKABILITY)
 			pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(spawn_point), GetLocationY(spawn_point))
-			
+
 			if (pathable) {
 				// Ensures point chosen is not closer than (SPAWN_MinDistance) units from any survivor.
-				ForGroup(SURVIVORS, function Verify_Point)
+				ForGroup(SURVIVOR_GROUP, function Verify_Point)
 				exitwhen spawn_point != null
 			}
-			
+
 			// MaxDistance approaches 5'000, to increase chances of point being pathable
 			SPAWN_MAX_DIST = SPAWN_MAX_DIST * 0.96 + 200
 		endloop
 		RemoveLocation(survivor_location)
 		survivor_location = null
-		
+
 		// Found a point to spawn a dinosaur at. Now to decide which one.
-		
+
 		int dino_type = GetRandomInt(1, 100)
 		//DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 4, ("RANDOM = " + I2S(dino_type)))
-		
+
 		// If every dino had a spawn chance of 25, and the dino_type was 24, then
 		// the dinosaur in the first slot would spawn. (Because 24 < 25)
-		// 
+		//
 		// If the dino_type was 26, then the first dino would not spawn, but
 		// dino_type would be reduced by 25 (to a value of 1). The second dinosaur
 		// would spawn, since 1 < 25
@@ -111,29 +112,29 @@ scope SpawnLoop
 		}
 		// The dino_type has been decided on, as well as the spawn location. Spawn.
 		unit dino = CreateUnitAtLoc(Player(11), LoadInteger(DINO_TABLE[DINO_LEVEL], i, 1), spawn_point, GetRandomReal(0, 360))
-		
+
 		// Also, stop it from trying to defend the position it spawned at
 		RemoveGuardPosition(dino)
-		
+
 		// Add the dinosaur to the group for the player it was spawned for.
 		GroupAddUnit(DINOSAUR_GROUPS[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], dino)
 		dino = null
-		
+
 		RemoveLocation(spawn_point)
 		spawn_point = null
 	}
 
 	void Spawn_Loop_Actions() {
 		// Run the Spawn_Dinosaur function for every survivor
-		ForGroup(SURVIVORS, function Spawn_Dinosaur)
+		ForGroup(SURVIVOR_GROUP, function Spawn_Dinosaur)
 	}
 endscope
 
 //===========================================================================
 void InitTrig_Spawn_Loop() {
+	debug BJDebugMsg("InitTrig_Spawn_Loop")
 	SPAWN_TRIGGER = CreateTrigger()
 	// Initially disabled. Enabled by Begin_Spawn.
 	DisableTrigger(SPAWN_TRIGGER)
-	TriggerRegisterTimerEvent(SPAWN_TRIGGER, 5, true)
 	TriggerAddAction(SPAWN_TRIGGER, function Spawn_Loop_Actions)
 }
