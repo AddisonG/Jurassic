@@ -18,7 +18,9 @@ void Survivor_Death_Actions() {
 		// Pause all timers
 		PauseTimer(ANGER_TIMER)
 		PauseTimer(LEVEL_TIMER)
-		PauseTimer(END_TIMER)
+		PauseTimer(GRACE_TIMER)
+		PauseTimer(SURVIVE_TIMER)
+		PauseTimer(EVAC_TIMER)
 
 		// Reveal map
 		FogEnable(false)
@@ -30,7 +32,6 @@ void Survivor_Death_Actions() {
 
 //===========================================================================
 void InitTrig_Survivor_Death() {
-	debug BJDebugMsg("InitTrig_Survivor_Death")
 	trigger t = CreateTrigger()
 	TriggerRegisterPlayerUnitEvent(t, Player(0), EVENT_PLAYER_UNIT_DEATH, null)
 	TriggerRegisterPlayerUnitEvent(t, Player(1), EVENT_PLAYER_UNIT_DEATH, null)

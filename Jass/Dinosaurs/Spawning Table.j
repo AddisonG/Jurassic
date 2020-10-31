@@ -1,10 +1,7 @@
 struct SpawningTable extends array {
-	// Max of 10 different types of dinosaurs per level
-	int array chance[10]
-	int array dinosaur[10]
+	int array chance[4]
+	int array dinosaur[4]
 }
-
-
 
 /*
 This is a picture of how the spawning table works: http://i.imgur.com/Rgoxtn0.png
@@ -13,7 +10,7 @@ or there will be bad times, as I don't think I added any failsafes.
 */
 
 void Setup_Spawning_Table() {
-	
+
 	SpawningTable[0].chance[0] = 32
 	SpawningTable[0].chance[1] = 40
 	SpawningTable[0].chance[2] = 14
@@ -22,9 +19,9 @@ void Setup_Spawning_Table() {
 	SpawningTable[0].dinosaur[1] = 'd0_1'
 	SpawningTable[0].dinosaur[2] = 'd0_2'
 	SpawningTable[0].dinosaur[3] = 'd0_3'
-	
+
 	////////// OLD METHOD //////////
-	
+
 	// LEVEL 1
 	integer VAL = 0
 	integer KEY = 1
@@ -38,7 +35,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 2, KEY, 'd0_2') // Bat
 	SaveInteger(temp, 3, KEY, 'd0_3') // Mosquitoes
 	DINO_TABLE[0] = temp
-	
+
 	// LEVEL 2
 	temp = InitHashtable()
 	SaveInteger(temp, 0, VAL, 32)
@@ -50,7 +47,7 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 2, KEY, 'd1_2') // Vampire Bat
 	SaveInteger(temp, 3, KEY, 'd1_3') // Fly Swarm
 	DINO_TABLE[1] = temp
-	
+
 	// LEVEL 3
 	temp = InitHashtable()
 	SaveInteger(temp, 0, VAL, 32)
@@ -62,31 +59,43 @@ void Setup_Spawning_Table() {
 	SaveInteger(temp, 2, KEY, 'd2_2') // Archaeopteryx
 	SaveInteger(temp, 3, KEY, 'd2_3') // Flesh Flies
 	DINO_TABLE[2] = temp
-	
+
 	// LEVEL 4
 	temp = InitHashtable()
-	SaveInteger(temp, 0, VAL, 30)
-	SaveInteger(temp, 1, VAL, 25)
-	SaveInteger(temp, 2, VAL, 25)
-	SaveInteger(temp, 3, VAL, 20)
+	SaveInteger(temp, 0, VAL, 32)
+	SaveInteger(temp, 1, VAL, 26)
+	SaveInteger(temp, 2, VAL, 26)
+	SaveInteger(temp, 3, VAL, 16)
 	SaveInteger(temp, 0, KEY, 'd3_0') // Ceratosaurus
 	SaveInteger(temp, 1, KEY, 'd3_1') // Woolly Rhino
 	SaveInteger(temp, 2, KEY, 'd3_2') // Ancient Archaeopteryx
 	SaveInteger(temp, 3, KEY, 'd3_3') // Large Flesh Fly Swarm
 	DINO_TABLE[3] = temp
-	
+
 	// LEVEL 5
 	temp = InitHashtable()
 	SaveInteger(temp, 0, VAL, 25)
-	SaveInteger(temp, 1, VAL, 25) // change these
+	SaveInteger(temp, 1, VAL, 25)
 	SaveInteger(temp, 2, VAL, 25)
 	SaveInteger(temp, 3, VAL, 25)
-	SaveInteger(temp, 0, KEY, 'd4_0') // Velociraptor
-	SaveInteger(temp, 1, KEY, 'd4_1') // 
-	SaveInteger(temp, 2, KEY, 'd4_2') // 
-	SaveInteger(temp, 3, KEY, 'd4_3') // Infected Swarm
+	SaveInteger(temp, 0, KEY, 'd4_0') // Alpha Ceratosaurus
+	SaveInteger(temp, 1, KEY, 'd4_1') //
+	SaveInteger(temp, 2, KEY, 'd4_2') // Pteranodon
+	SaveInteger(temp, 3, KEY, 'd4_3') // Giant Dragonfly
 	DINO_TABLE[4] = temp
-	
+
+	// LEVEL 6
+	temp = InitHashtable()
+	SaveInteger(temp, 0, VAL, 25)
+	SaveInteger(temp, 1, VAL, 25)
+	SaveInteger(temp, 2, VAL, 25)
+	SaveInteger(temp, 3, VAL, 25)
+	SaveInteger(temp, 0, KEY, 'd5_0') // Velociraptor
+	SaveInteger(temp, 1, KEY, 'd5_1') //
+	SaveInteger(temp, 2, KEY, 'd5_2') //
+	SaveInteger(temp, 3, KEY, 'd5_3') // Infected Swarm
+	DINO_TABLE[5] = temp
+
 	temp = null
 }
 

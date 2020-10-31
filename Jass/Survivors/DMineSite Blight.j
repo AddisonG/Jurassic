@@ -15,7 +15,7 @@ void DMineSite_Blight_Actions() {
 	location tempLocation = OffsetLocation(GetUnitLoc(GetTriggerUnit()), 64, -64)
 	rect tempRect = RectFromCenterSizeBJ(tempLocation, 384, 384) // 128 + 256 = 384
 	SetBlightRect(GetOwningPlayer(GetTriggerUnit()), tempRect, true)
-	
+
 	RemoveRect(tempRect)
 	RemoveLocation(tempLocation)
 	tempRect = null

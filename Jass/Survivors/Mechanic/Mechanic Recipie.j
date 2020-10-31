@@ -13,13 +13,13 @@ bool Mechanic_Recipe_Conditions() {
 /**
  * Checks that the engine and chassis are both above a threshold, or informs the
  * player of what is lacking.
- * 
+ *
  * PARAMETERS
  * engine_index - The engine to test
  * min_engine - The worst engine that this function will accept
  * chassis_index - The chassis to test
  * min_chassis - The worst chassis that this function will accept
- * 
+ *
  * RETURN
  * True - If the engine and chassis are both of sufficient quality
  * False - If either the engine or chassis are below the minimum standard
@@ -46,12 +46,12 @@ bool checkEngineAndChassis(int engine_index, int min_engine, int chassis_index, 
 void Mechanic_Recipe_Actions() {
 	player owner = GetOwningPlayer(GetTriggerUnit())
 	int recipe = GetItemTypeId(GetManipulatedItem())
-	
+
 	int chassis_index = -1
 	int engine_index = -1
 	int vehicle = 0
 	int i
-	
+
 	i = 0
 	// Find out what type of engine is in slot 1 or 2
 	while (i < ENGINE_NUM) {
@@ -62,7 +62,7 @@ void Mechanic_Recipe_Actions() {
 		}
 		i++
 	}
-	
+
 	i = 0
 	// Find out what type of chassis is in slot 1 or 2
 	while (i < CHASSIS_NUM) {
@@ -73,14 +73,14 @@ void Mechanic_Recipe_Actions() {
 		}
 		i++
 	}
-	
+
 	// Ensure that a valid engine and a chassis are registered
 	if (engine_index < 0 || chassis_index < 0) {
 		DisplayTimedTextToPlayer(owner, 0, 0, 3, \
 			"Ensure a chassis and engine are in the top two slots.")
 		return
 	}
-	
+
 	location point = GetUnitLoc(GetTriggerUnit())
 	if (recipe == BLUEPRINTS_JEEP) { // JEEP
 		CreateUnitAtLoc(owner, VEHICLE_JEEP, point, bj_UNIT_FACING)
@@ -107,16 +107,16 @@ void Mechanic_Recipe_Actions() {
 		}
 		CreateUnitAtLoc(owner, VEHICLE_AAHELI, point, bj_UNIT_FACING)
 	}
-	
+
 	RemoveLocation(point)
 	point = null
 	owner = null
-	
+
 	// Remove the recipe/blueprint, engine and chassis from the player
 	RemoveItem(GetItemOfTypeFromUnitBJ(GetTriggerUnit(), GetItemTypeId(GetManipulatedItem())))
 	RemoveItem(UnitItemInSlot(GetTriggerUnit(), 0))
 	RemoveItem(UnitItemInSlot(GetTriggerUnit(), 1))
-	
+
 	// Alter the newly created unit based on the engine and chassis used.
 	UnitAddAbility(bj_lastCreatedUnit, ENGINE_SPEED[engine_index])
 	UnitAddAbility(bj_lastCreatedUnit, ENGINE_FUELTANK[engine_index])

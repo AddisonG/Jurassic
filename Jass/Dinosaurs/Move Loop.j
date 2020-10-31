@@ -22,9 +22,6 @@ scope MoveLoop
 
 		IssuePointOrderLoc(dino, "attack", destination)
 
-		// Debugging
-		CreateDestructable('ZZdt', GetLocationX(destination), GetLocationY(destination), 0, 1, 0)
-
 		RemoveLocation(survivor_location)
 		RemoveLocation(dino_location)
 		RemoveLocation(destination)

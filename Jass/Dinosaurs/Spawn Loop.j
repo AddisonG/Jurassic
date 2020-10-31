@@ -132,7 +132,6 @@ endscope
 
 //===========================================================================
 void InitTrig_Spawn_Loop() {
-	debug BJDebugMsg("InitTrig_Spawn_Loop")
 	SPAWN_TRIGGER = CreateTrigger()
 	// Initially disabled. Enabled by Begin_Spawn.
 	DisableTrigger(SPAWN_TRIGGER)

@@ -27,6 +27,7 @@ void Trig_Ping_Base_Actions() {
 	pingTriggeringPlayerMap(14500, 2600) // Right, ruins by base of mountain
 	pingTriggeringPlayerMap(14000, -1500) // Bottom right, ruins by river
 	pingTriggeringPlayerMap(10800, -200) // Bottom, sunken area
+	pingTriggeringPlayerMap(6800, 900) // Bottom right, raised plateau
 
 	// SWAMP LANDS
 	pingTriggeringPlayerMap(7600, -9200) // Middle, pocket by the stone path
@@ -40,12 +41,10 @@ void Trig_Ping_Base_Actions() {
 //===========================================================================
 void InitTrig_Ping_Base() {
 	trigger t = CreateTrigger()
-	TriggerRegisterPlayerChatEvent(t, Player(0), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(1), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(2), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(3), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(4), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(5), "-base", true)
-	TriggerRegisterPlayerChatEvent(t, Player(6), "-base", true)
+	int player_num = 0
+	while (player_num < 7) {
+		TriggerRegisterPlayerChatEvent(t, Player(player_num), "-base ", true)
+		player_num++
+	}
 	TriggerAddAction(t, function Trig_Ping_Base_Actions)
 }

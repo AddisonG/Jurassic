@@ -1,7 +1,7 @@
 // If the triggering unit is a Scout tower, or any of its upgrades.
 bool Scout_Tower_Stop_Conditions() {
 	int triggering_unit_ID = GetUnitTypeId(GetTriggerUnit())
-	if (triggering_unit_ID == 'h003' || triggering_unit_ID == 'h004') { // Scout Tower, Crossbow
+	if (triggering_unit_ID == 'h003' || triggering_unit_ID == 'h004' || triggering_unit_ID == 'h00P') { // Scout Tower, Crossbow
 		return true
 	}
 	return false
@@ -22,7 +22,7 @@ void InitTrig_Scout_Tower_Stop() {
 	// Upon a unit upgrading or dying, check conditions.
 	TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_UPGRADE_FINISH)
 	TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_DEATH)
-	
+
 	TriggerAddCondition(t, Condition(function Scout_Tower_Stop_Conditions))
 	TriggerAddAction(t, function Scout_Tower_Stop_Actions)
 }

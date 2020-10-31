@@ -10,7 +10,7 @@ scope poacher {
 			return data
 		}
 
-		public static bool isTrained(player owner) {
+		public bool isTrained(player owner) {
 			// Check if upgrade is researched
 			return GetPlayerTechCount(owner, POACHER_RESEARCH, true) >= 1
 		}

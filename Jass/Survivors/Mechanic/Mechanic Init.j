@@ -6,21 +6,21 @@ globals
 	int array ENGINE_REFUEL
 	int array ENGINE_SPEED
 	int array ENGINE_USAGE
-	
+
 	constant int CHASSIS_NUM = 8
 	string array CHASSIS_NAME
 	int array CHASSIS_LIST
 	int array CHASSIS_ARMOUR
 	int array CHASSIS_HEALTH
 	int array CHASSIS_SPEED
-	
+
 	constant int BLUEPRINTS_JEEP = 'I00Q'
 	constant int BLUEPRINTS_HUMVEE = 'I00R'
 	constant int BLUEPRINTS_TANK = 'I00S'
 	constant int BLUEPRINTS_COBRA = 'I00T'
 	constant int BLUEPRINTS_TRANSPORT = 'I00U'
 	constant int BLUEPRINTS_AAHELI = 'I00V'
-	
+
 	constant int VEHICLE_JEEP = 'h00G'
 	constant int VEHICLE_HUMVEE = 'h00G' // Haven't made Humvee yet
 	constant int VEHICLE_TANK = 'h00H'
@@ -33,7 +33,7 @@ void Setup_Mechanic() {
 	/////////////
 	// ENGINES //
 	/////////////
-	
+
 	// Heat
 	ENGINE_NAME[0] = "Heat"
 	ENGINE_LIST[0] = 'I005'
@@ -83,11 +83,11 @@ void Setup_Mechanic() {
 	ENGINE_REFUEL[6] = 'A01S'
 	ENGINE_SPEED[6] = 'A00Y'
 	ENGINE_USAGE[6] = 'A012'
-	
+
 	/////////////
 	// CHASSIS //
 	/////////////
-	
+
 	// Wooden
 	CHASSIS_NAME[0] = "Wooden"
 	CHASSIS_LIST[0] = 'I00I'

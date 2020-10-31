@@ -20,7 +20,7 @@ void MineSite_Blight_Actions() {
 	location tempLocation = GetUnitLoc(GetTriggerUnit())
 	rect tempRect = RectFromCenterSizeBJ(tempLocation, 256, 256)
 	SetBlightRect(GetOwningPlayer(GetTriggerUnit()), tempRect, true)
-	
+
 	RemoveRect(tempRect)
 	RemoveLocation(tempLocation)
 	tempRect = null

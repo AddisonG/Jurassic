@@ -29,6 +29,9 @@ bool Sharing_Conditions() {
 
 
 real Hit_Chance(real distance, int effectiveRange, int accuracy) {
+	debug BJDebugMsg("distance: " + R2S(distance))
+	debug BJDebugMsg("effectiveRange: " + I2S(effectiveRange))
+	debug BJDebugMsg("accuracy: " + I2S(accuracy))
 	if (distance <= effectiveRange) {
 		// The shot is within the effective range. Accuracy is unchanged
 		return accuracy
@@ -44,4 +47,8 @@ real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 
 bool isSurvivor(unit survivor) {
 	return GetUnitTypeId(survivor) == SURVIVOR_UNIT_TYPE
+}
+
+void print_unit(unit x_unit) {
+	debug BJDebugMsg("UNIT: " + GetUnitName(x_unit) + ". [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]")
 }
