@@ -16,7 +16,7 @@ void Game_Start_Actions() {
 
 	// Spawn and destroy a helicopter above the survivors. Pretty immersive, huh?
 	location temp = Location(GetLocationX(MAP_CENTER), GetLocationY(MAP_CENTER) + 50)
-	unit helicopter = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n009', temp, 0)
+	unit helicopter = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'cbra', temp, 0)
 	KillUnit(helicopter)
 	RemoveLocation(temp)
 	helicopter = null

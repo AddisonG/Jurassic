@@ -1,18 +1,17 @@
 /*
 See comment for "MineSite Blight"
 
-This is much the same, but to compensate for the blight creation snapping up
-and left, the 3x3 blight square that is replacing the 2x2 blight square will
-grow so that the top left corner remains in the same place, and only the bottom
-and right will expand.
+If the blight snapped, then this increase of 64 in rectangle size should
+cause the blight to overflow in the opposite direction. If it didn't snap,
+then this will cause it to do so. Either way, the blight expands correctly.
 */
 
 bool DMineSite_Blight_Conditions() {
-	return GetUnitTypeId(GetTriggerUnit()) == 'n004'
+	return GetUnitTypeId(GetTriggerUnit()) == 'bmn2'
 }
 
 void DMineSite_Blight_Actions() {
-	location tempLocation = OffsetLocation(GetUnitLoc(GetTriggerUnit()), 64, -64)
+	location tempLocation = GetUnitLoc(GetTriggerUnit())
 	rect tempRect = RectFromCenterSizeBJ(tempLocation, 384, 384) // 128 + 256 = 384
 	SetBlightRect(GetOwningPlayer(GetTriggerUnit()), tempRect, true)
 

@@ -1,13 +1,13 @@
 void Drop_Tools(unit survivor) {
 	// Remove the harvest ability from the survivor
-	UnitRemoveAbility(survivor, 'A009')
+	UnitRemoveAbility(survivor, 'HRVT')
 	DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 3, \
 		"Dropped tools. Type -pickup or -tools to pick them up again.")
 }
 
 void Pickup_Tools(unit survivor) {
 	// Give survivor the harvest ability
-	UnitAddAbility(survivor, 'A009')
+	UnitAddAbility(survivor, 'HRVT')
 	DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 3, \
 		"Picked up tools. Type -drop to drop them again.")
 }

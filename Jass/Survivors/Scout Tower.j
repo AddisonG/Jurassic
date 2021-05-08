@@ -1,6 +1,6 @@
 // Only the scout tower has this line of sight ability.
 bool Scout_Tower_Conditions() {
-	return GetUnitTypeId(GetTriggerUnit()) == 'h003'
+	return GetUnitTypeId(GetTriggerUnit()) == 'bsct'
 }
 
 // Creates 10 visibility modifiers (with size proportionate to distance) in a line

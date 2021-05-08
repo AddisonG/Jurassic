@@ -34,11 +34,11 @@ real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 	debug BJDebugMsg("accuracy: " + I2S(accuracy))
 	if (distance <= effectiveRange) {
 		// The shot is within the effective range. Accuracy is unchanged
-		return accuracy
+		return I2R(accuracy)
 	}
 	if (distance >= effectiveRange * 2) {
 		// A shot can never be taken more than twice the effective range away
-		return 0
+		return 0.0
 	}
 
 	// At this point effectiveRange < distance
@@ -49,6 +49,46 @@ bool isSurvivor(unit survivor) {
 	return GetUnitTypeId(survivor) == SURVIVOR_UNIT_TYPE
 }
 
-void print_unit(unit x_unit) {
-	debug BJDebugMsg("UNIT: " + GetUnitName(x_unit) + ". [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]")
+string tostring_unit(unit x_unit) {
+	string output = "UNIT: " + GetUnitName(x_unit) + ". [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]"
+	return output
+}
+
+string tostring_item(item x_item) {
+	string output = "ITEM: " + GetItemName(x_item) + ". [" + R2S(GetItemX(x_item)) + ", " + R2S(GetItemY(x_item)) + "]"
+	return output
+}
+
+string tostring_location(location x_location) {
+	string output = "LOCATION: [" + R2S(GetLocationX(x_location)) + ", " + R2S(GetLocationY(x_location)) + "]"
+	return output
+}
+
+string tostring_spell() {
+	location target_loc = GetSpellTargetLoc()
+	unit target_unit = GetSpellTargetUnit()
+
+	string output = "SPELL: " + GetAbilityName(GetSpellAbilityId()) + ". "
+	if (target_unit != null) {
+		output += tostring_unit(target_unit)
+	} elseif (target_loc != null) {
+		output += tostring_location(target_loc)
+	}
+	return output
+}
+
+void debug_unit(unit x) {
+	debug BJDebugMsg(tostring_unit(x))
+}
+
+void debug_item(item x) {
+	debug BJDebugMsg(tostring_item(x))
+}
+
+void debug_location(location x) {
+	debug BJDebugMsg(tostring_location(x))
+}
+
+void debug_spell() {
+	debug BJDebugMsg(tostring_spell())
 }

@@ -1,7 +1,7 @@
 // If the triggering unit is a Scout tower, or any of its upgrades.
 bool Scout_Tower_Stop_Conditions() {
 	int triggering_unit_ID = GetUnitTypeId(GetTriggerUnit())
-	if (triggering_unit_ID == 'h003' || triggering_unit_ID == 'h004' || triggering_unit_ID == 'h00P') { // Scout Tower, Crossbow
+	if (triggering_unit_ID == 'bsct' || triggering_unit_ID == 'bcrs' || triggering_unit_ID == 'blsr') { // Scout Tower, Crossbow, Laser
 		return true
 	}
 	return false

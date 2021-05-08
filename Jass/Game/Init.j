@@ -35,7 +35,7 @@ globals
 	hashtable FOGMODS = InitHashtable()
 	hashtable FUGMODS = InitHashtable()
 
-	constant int SURVIVOR_UNIT_TYPE = 'h000'
+	constant int SURVIVOR_UNIT_TYPE = 'SURV'
 
 	// Damage types
 	constant attacktype AMMUNITION = ATTACK_TYPE_HERO
@@ -55,10 +55,10 @@ bool Player_Definition() {
 
 void Player_Setup() {
 	debug BJDebugMsg("Player_Setup")
-	location spawnpoint = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 360))
+	location surv_spawn = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 360))
 
 	// Spawn a survivor for the player
-	survivor_survivor s = survivor_survivor.create(CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, spawnpoint, GetRandomInt(0, 360)), GetEnumPlayer())
+	survivor_survivor s = survivor_survivor.create(CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, surv_spawn, GetRandomInt(0, 360)), GetEnumPlayer())
 	GroupAddUnit(SURVIVOR_GROUP, s.getUnit())
 
 	// Add them to the SURVIVORS group, and select them for the player
@@ -72,12 +72,14 @@ void Player_Setup() {
 	// Create a group for storing the dinosaurs assigned to this player
 	DINOSAUR_GROUPS[GetPlayerId(GetEnumPlayer())] = CreateGroup()
 
+	PanCameraToTimedLocForPlayer(GetEnumPlayer(), surv_spawn, 3.00)
+
 	// Set the player's resources
 	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 1000)
 	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER, 1000)
 
-	RemoveLocation(spawnpoint)
-	spawnpoint = null
+	RemoveLocation(surv_spawn)
+	surv_spawn = null
 }
 
 void Init_Actions() {

@@ -14,25 +14,27 @@ globals
 	int array CHASSIS_HEALTH
 	int array CHASSIS_SPEED
 
-	constant int BLUEPRINTS_JEEP = 'I00Q'
-	constant int BLUEPRINTS_HUMVEE = 'I00R'
-	constant int BLUEPRINTS_TANK = 'I00S'
-	constant int BLUEPRINTS_COBRA = 'I00T'
-	constant int BLUEPRINTS_TRANSPORT = 'I00U'
-	constant int BLUEPRINTS_AAHELI = 'I00V'
+	constant int BLUEPRINTS_JEEP = 'BJEP'
+	constant int BLUEPRINTS_HUMVEE = 'BHMV'
+	constant int BLUEPRINTS_TANK = 'BTNK'
+	constant int BLUEPRINTS_COBRA = 'BCBR'
+	constant int BLUEPRINTS_TRANSPORT = 'BCHP'
+	constant int BLUEPRINTS_AAHELI = 'BA64'
 
-	constant int VEHICLE_JEEP = 'h00G'
-	constant int VEHICLE_HUMVEE = 'h00G' // Haven't made Humvee yet
-	constant int VEHICLE_TANK = 'h00H'
-	constant int VEHICLE_COBRA = 'n009'
-	constant int VEHICLE_TRANSPORT = 'n005'
-	constant int VEHICLE_AAHELI = 'n00B' // lol, n00b
+	constant int VEHICLE_JEEP = 'jeep'
+	constant int VEHICLE_HUMVEE = 'jeep' // Haven't made Humvee yet
+	constant int VEHICLE_TANK = 'tank'
+	constant int VEHICLE_COBRA = 'cbra'
+	constant int VEHICLE_TRANSPORT = 'chpr'
+	constant int VEHICLE_AAHELI = 'ah64'
 endglobals
 
 void Setup_Mechanic() {
 	/////////////
 	// ENGINES //
 	/////////////
+
+	// TODO - fix all of these. Maybe hard code them less?
 
 	// Heat
 	ENGINE_NAME[0] = "Heat"

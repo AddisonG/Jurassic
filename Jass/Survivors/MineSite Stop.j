@@ -4,14 +4,20 @@ Removes the ability to Excavate for 2.5 seconds.
 */
 bool MineSite_Stop_Conditions() {
 	// Only true if unit is a Mining Site, and ability is "Stop Mining"
-	return (GetUnitTypeId(GetTriggerUnit()) == 'n003' && \
-		GetSpellAbilityId() == 'A00I')
+	return ((GetUnitTypeId(GetTriggerUnit()) == 'bmin' || GetUnitTypeId(GetTriggerUnit()) == 'bmn2') && \
+		GetSpellAbilityId() == 'SPMN')
 }
 
 void MineSite_Stop_Actions() {
-	UnitRemoveAbility(GetTriggerUnit(), 'A00B')
+	int exacvate = 'EXCV' // Regular mine site
+	if (GetUnitTypeId(GetTriggerUnit()) == 'bmn2') {
+		// Deep mining site
+		exacvate = 'DEXV'
+	}
+
+	UnitRemoveAbility(GetTriggerUnit(), exacvate)
 	TriggerSleepAction(2.50)
-	UnitAddAbility(GetTriggerUnit(), 'A00B')
+	UnitAddAbility(GetTriggerUnit(), exacvate)
 }
 
 //===========================================================================

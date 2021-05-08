@@ -34,10 +34,8 @@ lag terribly (when dinos spawn) in the event of the previous scenario occurring
 */
 
 scope SpawnLoop
-	globals
-		private location spawn_point
-		private location survivor_location
-	endglobals
+	location spawn_point
+	location survivor_location
 
 	// Returns false if the point is closer than MinDistance to the point.
 	// Math is: sqrt((player_x - spawn_x)^2 + (player_y - spawn_y)^2).

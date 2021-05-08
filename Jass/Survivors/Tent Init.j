@@ -7,7 +7,7 @@ convert it to an Igloo (identical equivilant) if in the Snow Lands.
 
 // If the unit that was just constructed was a tent
 bool Tent_Init_Conditions() {
-	return GetUnitTypeId(GetTriggerUnit()) == 'n002'
+	return GetUnitTypeId(GetTriggerUnit()) == 'tent'
 }
 
 // The "Return Gold and Lumber" ability must be added using a trigger, so that
@@ -17,7 +17,7 @@ void Tent_Init_Actions() {
 	// If the newly constructed building is in the "snow lands"...
 	if (RectContainsCoords(gg_rct_Frozen_Lands, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()))) {
 		// Replace that tent with a freaking igloo!!!
-		ReplaceUnitBJ(GetTriggerUnit(), 'n007', bj_UNIT_STATE_METHOD_ABSOLUTE)
+		ReplaceUnitBJ(GetTriggerUnit(), 'iglo', bj_UNIT_STATE_METHOD_ABSOLUTE)
 		// Either way, give it the "Return Gold and Lumber" ability.
 		UnitAddAbility(bj_lastReplacedUnit, 'Argl')
 	} else {

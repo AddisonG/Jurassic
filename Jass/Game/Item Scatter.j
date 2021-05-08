@@ -6,7 +6,7 @@ void Item_Scatter_Actions() {
 	int i = 0
 	while (i < (100 - 10 * DIFFICULTY)) {
 		temp = GetRandomLocInRect(WHOLE_MAP)
-		CreateItemLoc('I001', temp)
+		CreateItemLoc('GLD1', temp)
 		RemoveLocation(temp)
 		i++
 	}
@@ -15,7 +15,7 @@ void Item_Scatter_Actions() {
 	i = 0
 	while (i < (100 - 10 * DIFFICULTY)) {
 		temp = GetRandomLocInRect(WHOLE_MAP)
-		CreateItem('I000', GetLocationX(temp), GetLocationY(temp))
+		CreateItem('WOD1', GetLocationX(temp), GetLocationY(temp))
 		RemoveLocation(temp)
 		i++
 	}

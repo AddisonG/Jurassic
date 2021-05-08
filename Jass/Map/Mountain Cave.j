@@ -10,7 +10,8 @@ void Trig_Mountain_Cave_Actions() {
 	TriggerSleepAction(1.20)
 	ShowUnit(GetTriggerUnit(), true)
 
-	if (RectContainsLoc(gg_rct_Cave_West, GetUnitLoc(GetTriggerUnit()))) {
+	location unit_loc = GetUnitLoc(GetTriggerUnit())
+	if (RectContainsLoc(gg_rct_Cave_West, unit_loc)) {
 		temp = Location(GetRectCenterX(gg_rct_Cave_East) + 150, GetRectCenterY(gg_rct_Cave_East))
 		SetUnitPositionLocFacingBJ(GetTriggerUnit(), temp, 350)
 	} else {
@@ -20,7 +21,9 @@ void Trig_Mountain_Cave_Actions() {
 	SelectUnitForPlayerSingle(GetTriggerUnit(), GetOwningPlayer(GetTriggerUnit()))
 
 	RemoveLocation(temp)
+	RemoveLocation(unit_loc)
 	temp = null
+	unit_loc = null
 }
 
 //===========================================================================
