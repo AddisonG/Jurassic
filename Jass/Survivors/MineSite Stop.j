@@ -12,7 +12,7 @@ void MineSite_Stop_Actions() {
 	int exacvate = 'EXCV' // Regular mine site
 	if (GetUnitTypeId(GetTriggerUnit()) == 'bmn2') {
 		// Deep mining site
-		exacvate = 'DEXV'
+		exacvate = 'DEXC'
 	}
 
 	UnitRemoveAbility(GetTriggerUnit(), exacvate)

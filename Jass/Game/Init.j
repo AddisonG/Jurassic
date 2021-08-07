@@ -6,7 +6,7 @@ include "cj_typesEx_priv.j"
 globals
 	force PLAYERS = CreateForce()
 	group SURVIVOR_GROUP = CreateGroup()
-	survivor_survivor array SURVIVORS
+	survivor_survivor array SURVIVORS[10]
 
 	rect WHOLE_MAP
 	timer GRACE_TIMER = CreateTimer()
@@ -33,18 +33,25 @@ globals
 	button array DIFFICULTY_BUTTONS
 
 	hashtable FOGMODS = InitHashtable()
-	hashtable FUGMODS = InitHashtable()
 
 	constant int SURVIVOR_UNIT_TYPE = 'SURV'
 
 	// Damage types
-	constant attacktype AMMUNITION = ATTACK_TYPE_HERO
-	constant attacktype SPIT       = ATTACK_TYPE_MAGIC
-	constant attacktype FIRE       = ATTACK_TYPE_SIEGE
-	constant attacktype BITE       = ATTACK_TYPE_CHAOS
-	constant attacktype CLAW       = ATTACK_TYPE_MELEE
-	constant attacktype ELECTRIC   = ATTACK_TYPE_PIERCE
-	constant attacktype BLUNT      = ATTACK_TYPE_NORMAL
+	constant attacktype BITE        = ATTACK_TYPE_CHAOS
+	constant attacktype CRUSH       = ATTACK_TYPE_HERO
+	constant attacktype SPIT        = ATTACK_TYPE_MAGIC
+	constant attacktype BLUNT       = ATTACK_TYPE_NORMAL
+	constant attacktype AMMUNITION  = ATTACK_TYPE_PIERCE
+	constant attacktype ELECTRIC    = ATTACK_TYPE_SIEGE
+
+	// Armor types
+	/*
+	Small = Hide
+	Medium = Scale
+	Large = Wood
+	Fortified = Stone
+	Normal = Steel
+	*/
 endglobals
 
 bool Player_Definition() {
@@ -54,8 +61,8 @@ bool Player_Definition() {
 }
 
 void Player_Setup() {
-	debug BJDebugMsg("Player_Setup")
-	location surv_spawn = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 360))
+	debug BJDebugMsg("Player_Setup #" + I2S(GetPlayerId(GetEnumPlayer())))
+	location surv_spawn = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 359))
 
 	// Spawn a survivor for the player
 	survivor_survivor s = survivor_survivor.create(CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, surv_spawn, GetRandomInt(0, 360)), GetEnumPlayer())
@@ -63,6 +70,7 @@ void Player_Setup() {
 
 	// Add them to the SURVIVORS group, and select them for the player
 	SURVIVORS[GetPlayerId(GetEnumPlayer())] = s
+	debug_unit(SURVIVORS[0].getUnit())
 	if (GetLocalPlayer() == GetEnumPlayer()) {
 		// Select the unit for the player who owns it
 		ClearSelection()
@@ -75,8 +83,8 @@ void Player_Setup() {
 	PanCameraToTimedLocForPlayer(GetEnumPlayer(), surv_spawn, 3.00)
 
 	// Set the player's resources
-	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 1000)
-	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER, 1000)
+	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 10000)
+	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER, 10000)
 
 	RemoveLocation(surv_spawn)
 	surv_spawn = null
@@ -87,7 +95,7 @@ void Init_Actions() {
 	StopMusic(false)
 	PauseGame(true)
 
-	// Create groups
+	// Create groups and forces
 	boolexpr conditions = Condition(function Player_Definition)
 	ForceEnumPlayers(PLAYERS, conditions)
 	DestroyBoolExpr(conditions)

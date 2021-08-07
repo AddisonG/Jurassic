@@ -27,7 +27,6 @@ bool Sharing_Conditions() {
 	return true
 }
 
-
 real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 	debug BJDebugMsg("distance: " + R2S(distance))
 	debug BJDebugMsg("effectiveRange: " + I2S(effectiveRange))
@@ -45,17 +44,35 @@ real Hit_Chance(real distance, int effectiveRange, int accuracy) {
 	return Cos((distance - effectiveRange) / (effectiveRange * bj_PI / 10)) * (accuracy / 2) + (accuracy / 2)
 }
 
+bool proximity_check(location first, location second, real threshold) {
+	// Returns true if the locations are within threshold of each other
+	real x_diff_sqrd = Pow(GetLocationX(first) - GetLocationX(second), 2)
+	real y_diff_sqrd = Pow(GetLocationY(first) - GetLocationY(second), 2)
+	return SquareRoot(x_diff_sqrd + y_diff_sqrd) <= threshold
+}
+
+bool proximity_check_units(unit first, unit second, real threshold) {
+	// Returns true if the units are within threshold of each other
+	location first_loc = GetUnitLoc(first)
+	location second_loc = GetUnitLoc(second)
+	real x_diff_sqrd = Pow(GetLocationX(first_loc) - GetLocationX(second_loc), 2)
+	real y_diff_sqrd = Pow(GetLocationY(first_loc) - GetLocationY(second_loc), 2)
+	RemoveLocation(first_loc)
+	RemoveLocation(second_loc)
+	return SquareRoot(x_diff_sqrd + y_diff_sqrd) <= threshold
+}
+
 bool isSurvivor(unit survivor) {
 	return GetUnitTypeId(survivor) == SURVIVOR_UNIT_TYPE
 }
 
 string tostring_unit(unit x_unit) {
-	string output = "UNIT: " + GetUnitName(x_unit) + ". [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]"
+	string output = "UNIT: '" + GetUnitName(x_unit) + "'. [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]"
 	return output
 }
 
 string tostring_item(item x_item) {
-	string output = "ITEM: " + GetItemName(x_item) + ". [" + R2S(GetItemX(x_item)) + ", " + R2S(GetItemY(x_item)) + "]"
+	string output = "ITEM: '" + GetItemName(x_item) + "'. [" + R2S(GetItemX(x_item)) + ", " + R2S(GetItemY(x_item)) + "]"
 	return output
 }
 
@@ -68,7 +85,7 @@ string tostring_spell() {
 	location target_loc = GetSpellTargetLoc()
 	unit target_unit = GetSpellTargetUnit()
 
-	string output = "SPELL: " + GetAbilityName(GetSpellAbilityId()) + ". "
+	string output = "SPELL: '" + GetAbilityName(GetSpellAbilityId()) + "'. "
 	if (target_unit != null) {
 		output += tostring_unit(target_unit)
 	} elseif (target_loc != null) {

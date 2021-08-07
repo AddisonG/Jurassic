@@ -12,7 +12,7 @@ void Scout_Tower_Stop_Actions() {
 	int i = 0
 	while (i <= 10) {
 		DestroyFogModifier(LoadFogModifierHandle(FOGMODS, GetHandleId(GetTriggerUnit()), i))
-		i++;
+		i++
 	}
 }
 
