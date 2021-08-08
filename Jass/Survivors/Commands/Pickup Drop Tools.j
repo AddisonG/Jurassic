@@ -28,7 +28,7 @@ void InitTrig_Pickup_Drop_Tools() {
 	trigger t = CreateTrigger()
 
 	int i = 0
-	while (i <= 6) { // 0 to 6
+	while (i < 7) {
 		TriggerRegisterPlayerChatEvent(t, Player(i), "-pickup", true)
 		TriggerRegisterPlayerChatEvent(t, Player(i), "-tools", true)
 		TriggerRegisterPlayerChatEvent(t, Player(i), "-drop", true)

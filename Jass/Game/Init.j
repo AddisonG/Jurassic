@@ -55,8 +55,9 @@ globals
 endglobals
 
 bool Player_Definition() {
-	// Player is both a user, and is playing (No idea if this is how you're meant to do it)
-	return (GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING)
+	// Player is both a user, and is playing
+	return (GetPlayerController(GetFilterPlayer()) == MAP_CONTROL_USER) && \
+		(GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING)
 }
 
 void Player_Setup() {
@@ -86,7 +87,6 @@ void Player_Setup() {
 	SetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER, 10000)
 
 	RemoveLocation(surv_spawn)
-	surv_spawn = null
 }
 
 void Init_Actions() {
@@ -98,7 +98,6 @@ void Init_Actions() {
 	boolexpr conditions = Condition(function Player_Definition)
 	ForceEnumPlayers(PLAYERS, conditions)
 	DestroyBoolExpr(conditions)
-	conditions = null
 
 	// Define globals
 	WHOLE_MAP = bj_mapInitialPlayableArea

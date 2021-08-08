@@ -20,6 +20,10 @@ struct Dinosaur extends array {
 	// The dino unit
 	public unit dino
 
+	// Linked list (list of all dinosaurs)
+	public Dinosaur next
+	public Dinosaur prev
+
 	// The unit that this dino is hunting
 	public unit target
 
@@ -27,12 +31,10 @@ struct Dinosaur extends array {
 		debug BJDebugMsg("Dino create")
 		thistype data = thistype.allocate()
 
-		debug_location(spawn_loc)
-
 		data.target = target
 		data.dino = CreateUnitAtLoc(Player(11), dino_type, spawn_loc, 0)
-
-		debug_unit(data.dino)
+		data.next = -1
+		data.prev = -1
 
 		// Stop it from trying to defend the position it spawned at
 		RemoveGuardPosition(data.dino)
@@ -64,12 +66,11 @@ struct Dinosaur extends array {
 			DistanceBetweenPoints(dino_location, target_location)
 		real angle = AngleBetweenPoints(dino_location, target_location)
 
-		// Find the center of the circle between the dinosaur and target
+		// Find a point between the dinosaur and the target
 		location circle_center = PolarProjectionBJ(dino_location, \
 			distance * CIRCLE_CENTER_DISTANCE_PERCENT, angle)
 
-		// Offset from the point to a random place within the circle
-
+		// Offset from the point to a random place within a circle
 		location destination = PolarProjectionBJ(circle_center, \
 			GetRandomInt(0, IMaxBJ(CIRCLE_RADIUS_MINIMUM, \
 				R2I(distance * CIRCLE_RADIUS_PERCENT))), \
@@ -106,6 +107,13 @@ struct Dinosaur extends array {
 	}
 
 	public void destroy() {
+		// Remove self from the linked list
+		if (prev > 0) {
+			prev.next = next
+		}
+		if (next > 0) {
+			next.prev = prev
+		}
 		this.deallocate()
 	}
 }

@@ -1,26 +1,49 @@
-struct dino_group extends array {
-	implement Alloc
+/*
+A random point is generated somewhere within a donut shape around each
+survivor, to be used as the point to spawn a dinosaur at.
 
-	public int foo
+The initial minimum distance is: (1000 - 150 * difficulty) units
+The initial maximum distance is: (minimum distance + 3000) units
 
-	public static thistype create(int bar) {
-		thistype data = thistype.allocate()
-		data.foo = bar
-		return data
-	}
+In this way, there is always a chance of a dinosaur spawning dangerously close,
+or several spawning far away before they eventually gather at the survivors location.
 
-	public void destroy() {
-		this.deallocate()
-	}
-}
+To prevent the issue of a dinosaur spawning on top of another friendly survivor
+(such as in the case of 2 survivors standing 1500 units apart), the point generated
+will be tested to ensure it is not within the minimum threshold of any other survivor.
 
-struct spawn_chance_map {
+Additionally, the points 'walkability' value must be on, to prevent spawns
+outside of the map, within trees (mostly), and on cliffs.
+
+If either of these conditions mentioned above fail, then the maximum spawn
+distance will increase by 10% (stacking), and the trigger will be called again.
+The increase in spawn distance is to prevent the situation in which there are no
+(or very few) valid spawn points in range of the survivor.
+
+For example, consider the case in which a survivor is in the very top left corner
+of the map. 3/4 of his spawns will fail simply due to the random angle they are
+located in (any spawns not between 90 and 180 degrees are outside the map). Now
+consider if the whole group of survivors was in the corner, spread out over a
+few thousand units. Even spawns that are in the correct direction have a near
+guaranteed chance of failure because of their proximity to other friendly survivors.
+In this way, it will become more likely to spawn successfully the longer the
+spawner tries, although the maximum spawn distance is reset upon a successful
+spawn. This method is not a completely effective fix, as the game will likely
+lag terribly (when dinos spawn) in the event of the previous scenario occurring
+(which is not impossible).
+*/
+
+/*
+This is a picture of how the spawning table works: http://i.imgur.com/Rgoxtn0.png
+The values in the first column (0) MUST be at least 100,
+or there will be bad times, as I don't think I added any failsafes.
+*/
+struct SpawnChances {
 	int array chance[4]
-	int array dino[4]
 }
 
 struct Spawner {
-	private spawn_chance_map spawn_map
+	private SpawnChances chances
 
 	// I did it this way because these multi-dimensional are much harder in structs
 	private int array quick_dino_chances[10]
@@ -36,31 +59,33 @@ struct Spawner {
 	// The target that units spawned by this will hunt
 	public unit target
 
-	public void init(unit target) {
-		this.target = target
-		this.current_level = 0
+	// Whether or not the spawner is enabled
+	public bool enabled
+
+	public static thistype create(unit target) {
+		thistype data = thistype.allocate()
+		data.target = target
+		data.current_level = 0
+		data.enabled = false
 
 		int level = 0
 		while (level < 5) {
 			// Static, for now. Every level has the same chances
-			quick_dino_chances[level] = 30
-			tanky_dino_chances[level] = 30
-			flyer_dino_chances[level] = 25
-			pest_dino_chances[level] = 15
+			data.quick_dino_chances[level] = 30
+			data.tanky_dino_chances[level] = 30
+			data.flyer_dino_chances[level] = 25
+			data.pest_dino_chances[level] = 15
 
 			level++
 		}
 
-		spawn_map = spawn_chance_map.create()
-		spawn_map.chance[0] = quick_dino_chances[current_level]
-		spawn_map.chance[1] = tanky_dino_chances[current_level]
-		spawn_map.chance[2] = flyer_dino_chances[current_level]
-		spawn_map.chance[3] = pest_dino_chances[current_level]
+		data.chances = SpawnChances.create()
+		data.chances.chance[0] = data.quick_dino_chances[data.current_level]
+		data.chances.chance[1] = data.tanky_dino_chances[data.current_level]
+		data.chances.chance[2] = data.flyer_dino_chances[data.current_level]
+		data.chances.chance[3] = data.pest_dino_chances[data.current_level]
 
-		spawn_map.dino[0] = S2ID("d" + I2S(current_level) + "_" + I2S(0)) // Quick
-		spawn_map.dino[1] = S2ID("d" + I2S(current_level) + "_" + I2S(1)) // Tanky
-		spawn_map.dino[2] = S2ID("d" + I2S(current_level) + "_" + I2S(2)) // Flyer
-		spawn_map.dino[3] = S2ID("d" + I2S(current_level) + "_" + I2S(3)) // Pest
+		return data
 	}
 
 	/* If every dino had a spawn chance of 25, and the dino_type was 24, then
@@ -73,16 +98,16 @@ struct Spawner {
 	private int get_dino_type() {
 		int dino_type = GetRandomInt(1, 100)
 		int i = 0
-		while (dino_type > spawn_map.chance[i]) {
-			dino_type -= spawn_map.chance[i]
+		while (dino_type > chances.chance[i]) {
+			dino_type -= chances.chance[i]
 			i++
 		}
-
-		return spawn_map.dino[i]
-		// Use this Addison
-		// return S2ID("d" + I2S(current_level) + "_" + I2S(i))
+		return S2ID("d" + I2S(current_level) + "_" + I2S(i))
 	}
 
+	/* Ensure that the potential spawn location is not too close to other
+	 * survivors. If it's too close to one of them, reject it.
+	**/
 	private bool valid_spawn_location(location loc) {
 		int s = 0
 		while (s < 7) {
@@ -130,32 +155,34 @@ struct Spawner {
 	}
 
 	public Dinosaur spawn_dino() {
+		if (not enabled) {
+			debug BJDebugMsg("Spawner is disabled. Not spawning")
+			return null
+		}
 		int dino_type = get_dino_type()
 		location dino_spawn = get_dino_spawn_location()
 
-		return Dinosaur.create(dino_type, dino_spawn, this.target)
+		return Dinosaur.create(dino_type, dino_spawn, target)
+	}
+
+	public bool is_enabled() {
+		return enabled
 	}
 }
 
-/*
-This is a picture of how the spawning table works: http://i.imgur.com/Rgoxtn0.png
-The values in the first column (0) MUST be at least 100,
-or there will be bad times, as I don't think I added any failsafes.
-*/
+// void Setup_Spawner() {
+// 	// Create a spawner for each player
+// 	// The spawn loop will manage them
+// 	debug BJDebugMsg("SETUP SPAWNER")
 
-void Setup_Spawner() {
-	// Create a spawner for each player
-	// The spawn loop will manage them
-	debug BJDebugMsg("SETUP SPAWNER")
+// 	Spawner foo = Spawner.create(SURVIVORS[0].get_unit())
+// 	foo.enabled = true
+// 	foo.spawn_dino()
+// }
 
-	Spawner foo = Spawner.create()
-	foo.init(SURVIVORS[0].get_unit())
-	foo.spawn_dino()
-}
-
-//===========================================================================
-void InitTrig_Spawner() {
-	trigger t = CreateTrigger()
-	TriggerAddAction(t, function Setup_Spawner)
-	TriggerRegisterTimerEvent(t, 1, false)
-}
+// //===========================================================================
+// void InitTrig_Spawner() {
+// 	trigger t = CreateTrigger()
+// 	TriggerAddAction(t, function Setup_Spawner)
+// 	TriggerRegisterTimerEvent(t, 1, false)
+// }

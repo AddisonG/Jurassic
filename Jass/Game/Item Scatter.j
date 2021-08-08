@@ -15,11 +15,10 @@ void Item_Scatter_Actions() {
 	i = 0
 	while (i < (100 - 10 * DIFFICULTY)) {
 		temp = GetRandomLocInRect(WHOLE_MAP)
-		CreateItem('WOD1', GetLocationX(temp), GetLocationY(temp))
+		CreateItemLoc('WOD1', temp)
 		RemoveLocation(temp)
 		i++
 	}
-	temp = null
 	DestroyTrigger(GetTriggeringTrigger())
 }
 

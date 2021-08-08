@@ -4,6 +4,7 @@ struct Survivor extends array {
 	private unit u // The survivor
 	private player p // The player
 	private bool alive
+	private Spawner spawner
 
 	// The skill trees
 	private Biologist biol
@@ -21,6 +22,7 @@ struct Survivor extends array {
 		data.p = play
 		data.alive = true
 		data.kill_counter = 0
+		data.spawner = Spawner.create(data.u)
 
 		return data
 	}
@@ -37,9 +39,14 @@ struct Survivor extends array {
 		return this.alive
 	}
 
+	public Spawner get_spawner() {
+		return spawner
+	}
+
 	public void death_actions() {
 		// Do all the stuff that happens after the survivor dies
 		this.alive = false
+		this.spawner.enabled = false
 	}
 
 	public void debug() {

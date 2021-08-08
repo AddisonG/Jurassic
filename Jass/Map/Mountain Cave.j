@@ -22,8 +22,6 @@ void Trig_Mountain_Cave_Actions() {
 
 	RemoveLocation(temp)
 	RemoveLocation(unit_loc)
-	temp = null
-	unit_loc = null
 }
 
 //===========================================================================
