@@ -5,7 +5,7 @@ bool Survivor_Death_Conditions() {
 
 void Survivor_Death_Actions() {
 	debug BJDebugMsg("Survivor_Death_Actions")
-	SURVIVORS[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))].deathActions()
+	SURVIVORS[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))].death_actions()
 
 	GroupRemoveUnit(SURVIVOR_GROUP, GetTriggerUnit())
 	RemoveUnit(GetTriggerUnit())

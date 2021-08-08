@@ -1,57 +1,57 @@
-scope survivor {
-	public struct survivor {
-		private unit u = null // The survivor
-		private player p = null // The player
-		private location pos = null
-		private bool alive = true
+struct Survivor extends array {
+	implement Alloc
 
-		// The skill trees
-		private biologist_biologist biol
-		private mechanic_mechanic mech
-		private poacher_poacher poach
-		private engineer_engineer engi
+	private unit u // The survivor
+	private player p // The player
+	private bool alive
 
-		public int killCounter
+	// The skill trees
+	private Biologist biol
+	private Mechanic mech
+	private Poacher poach
+	private Engineer engi
 
-		public static survivor create(unit surv, player play) {
-			debug BJDebugMsg("Creating survivor")
-			survivor data = survivor.allocate()
+	public int kill_counter
 
-			data.u = surv
-			data.p = play
-			data.killCounter = 0
+	public static thistype create(location loc, player play) {
+		debug BJDebugMsg("Creating survivor")
+		thistype data = thistype.allocate()
 
-			return data
-		}
+		data.u = CreateUnitAtLoc(play, SURVIVOR_UNIT_TYPE, loc, GetRandomInt(0, 360))
+		data.p = play
+		data.alive = true
+		data.kill_counter = 0
 
-		public player getPlayer() {
-			return this.p
-		}
+		return data
+	}
 
-		public unit getUnit() {
-			return this.u
-		}
+	public player get_player() {
+		return this.p
+	}
 
-		public bool isAlive() {
-			return this.alive
-		}
+	public unit get_unit() {
+		return this.u
+	}
 
-		public void deathActions() {
-			// Do all the stuff that happens after the survivor dies
-			this.alive = false
-		}
+	public bool is_alive() {
+		return this.alive
+	}
 
-		public void debug() {
-			DisplayTimedTextToPlayer(this.p, 0, 0, 5, "Player: " + I2S(GetPlayerId(this.p)))
-			DisplayTimedTextToPlayer(this.p, 0, 0, 5, "Name: " + GetUnitName(this.u))
-			DisplayTimedTextToPlayer(this.p, 0, 0, 5, "Position: " + R2S(GetUnitX(this.u)) + ", " + R2S(GetUnitY(this.u)))
-		}
+	public void death_actions() {
+		// Do all the stuff that happens after the survivor dies
+		this.alive = false
+	}
 
-		public void killedUnit() {
-			this.killCounter++
-			if (this.poach.isTrained(this.getPlayer())) {
-				// get gold
-			}
+	public void debug() {
+		debug BJDebugMsg("Player: " + I2S(GetPlayerId(this.p)))
+		debug BJDebugMsg("Name: " + GetUnitName(this.u))
+		debug BJDebugMsg("Position: " + I2S(R2I(GetUnitX(this.u))) + ", " + I2S(R2I(GetUnitY(this.u))))
+	}
+
+	public void killed_unit() {
+		this.kill_counter++
+		if (this.poach.is_trained(this.get_player())) {
+			// get gold
 		}
 	}
 }

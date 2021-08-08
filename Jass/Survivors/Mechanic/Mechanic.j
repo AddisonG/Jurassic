@@ -1,42 +1,38 @@
-scope mechanic {
+constant int MECHANIC_RESEARCH = 'MECH'
+constant int VEHICLE_CAP = 3
 
-	private constant int MECHANIC_RESEARCH = 'MECH'
-	private constant int VEHICLE_CAP = 3
+struct Mechanic extends array {
+	implement Alloc
 
-	public struct mechanic {
+	private int vehicle_count
 
-		private int vehicleCount
+	public static thistype create() {
+		thistype data = thistype.allocate()
+		data.vehicle_count = 0
+		return data
+	}
 
-		public static mechanic create() {
-			mechanic data = mechanic.allocate()
-
-			data.vehicleCount = 0
-
-			return data
+	public void build_vehicle(unit survivor, unittype vehicle) {
+		if (this.vehicle_count >= VEHICLE_CAP) {
+			// Friendly message
+			return
 		}
 
-		public void buildVehicle(unit survivor, unittype vehicle) {
-			if (this.vehicleCount >= VEHICLE_CAP) {
-				// Friendly message
-				return
-			}
+		this.vehicle_count++
+	}
 
-			this.vehicleCount++
+	public void destroy_vehicle(unit vehicle) {
+		if (this.vehicle_count > 0) {
+			this.vehicle_count--
 		}
+	}
 
-		public void destroyVehicle(unit vehicle) {
-			if (this.vehicleCount > 0) {
-				this.vehicleCount--
-			}
-		}
+	public static void mechanic_skill(unit survivor, unit target) {
+		// Use mechanic secret skill
+	}
 
-		public static void mechanicSkill(unit survivor, unit target) {
-			// Use mechanic secret skill
-		}
-
-		public bool isTrained(player owner) {
-			// Check if upgrade is researched
-			return GetPlayerTechCount(owner, MECHANIC_RESEARCH, true) >= 1
-		}
+	public bool is_trained(player owner) {
+		// Check if upgrade is researched
+		return GetPlayerTechCount(owner, MECHANIC_RESEARCH, true) >= 1
 	}
 }

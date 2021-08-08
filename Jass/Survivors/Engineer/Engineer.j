@@ -1,18 +1,15 @@
-scope engineer {
+constant int ENGINEER_RESEARCH = 'ENGI'
 
-	private constant int ENGINEER_RESEARCH = 'ENGI'
+struct Engineer extends array {
+	implement Alloc
 
-	public struct engineer {
+	public static thistype create() {
+		thistype data = thistype.allocate()
+		return data
+	}
 
-		public static engineer create() {
-			engineer data = engineer.allocate()
-
-			return data
-		}
-
-		public bool isTrained(player owner) {
-			// Check if upgrade is researched
-			return GetPlayerTechCount(owner, ENGINEER_RESEARCH, true) >= 1
-		}
+	public bool is_trained(player owner) {
+		// Check if upgrade is researched
+		return GetPlayerTechCount(owner, ENGINEER_RESEARCH, true) >= 1
 	}
 }

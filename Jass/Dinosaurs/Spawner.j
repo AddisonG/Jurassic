@@ -19,7 +19,7 @@ struct spawn_chance_map {
 	int array dino[4]
 }
 
-struct spawner {
+struct Spawner {
 	private spawn_chance_map spawn_map
 
 	// I did it this way because these multi-dimensional are much harder in structs
@@ -51,7 +51,6 @@ struct spawner {
 			level++
 		}
 
-		// Start
 		spawn_map = spawn_chance_map.create()
 		spawn_map.chance[0] = quick_dino_chances[current_level]
 		spawn_map.chance[1] = tanky_dino_chances[current_level]
@@ -80,16 +79,16 @@ struct spawner {
 		}
 
 		return spawn_map.dino[i]
+		// Use this Addison
 		// return S2ID("d" + I2S(current_level) + "_" + I2S(i))
 	}
 
 	private bool valid_spawn_location(location loc) {
 		int s = 0
-		debug_location(loc)
-		while (s <= 10) {
-			if (SURVIVORS[s] >= 0) {
+		while (s < 7) {
+			if (SURVIVORS[s].is_alive()) {
 				// If the spawn location is too close to a survivor, we reject it
-				location other_survivor = GetUnitLoc(SURVIVORS[s].getUnit())
+				location other_survivor = GetUnitLoc(SURVIVORS[s].get_unit())
 				if (proximity_check(loc, other_survivor, min_distance)) {
 					RemoveLocation(other_survivor)
 					return false
@@ -130,11 +129,11 @@ struct spawner {
 		return potential_spawn
 	}
 
-	public dinosaur spawn_dino() {
+	public Dinosaur spawn_dino() {
 		int dino_type = get_dino_type()
 		location dino_spawn = get_dino_spawn_location()
 
-		return dinosaur.create(dino_type, dino_spawn, this.target)
+		return Dinosaur.create(dino_type, dino_spawn, this.target)
 	}
 }
 
@@ -149,10 +148,8 @@ void Setup_Spawner() {
 	// The spawn loop will manage them
 	debug BJDebugMsg("SETUP SPAWNER")
 
-	debug_unit(SURVIVORS[0].getUnit())
-
-	spawner foo = spawner.create()
-	foo.init(SURVIVORS[0].getUnit())
+	Spawner foo = Spawner.create()
+	foo.init(SURVIVORS[0].get_unit())
 	foo.spawn_dino()
 }
 

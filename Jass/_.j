@@ -62,22 +62,22 @@ bool proximity_check_units(unit first, unit second, real threshold) {
 	return SquareRoot(x_diff_sqrd + y_diff_sqrd) <= threshold
 }
 
-bool isSurvivor(unit survivor) {
-	return GetUnitTypeId(survivor) == SURVIVOR_UNIT_TYPE
+bool isSurvivor(unit x) {
+	return GetUnitTypeId(x) == SURVIVOR_UNIT_TYPE
 }
 
-string tostring_unit(unit x_unit) {
-	string output = "UNIT: '" + GetUnitName(x_unit) + "'. [" + R2S(GetUnitX(x_unit)) + ", " + R2S(GetUnitY(x_unit)) + "]"
+string tostring_unit(unit x) {
+	string output = "UNIT: '" + GetUnitName(x) + "'. [" + I2S(R2I(GetUnitX(x))) + ", " + I2S(R2I(GetUnitY(x))) + "]"
 	return output
 }
 
-string tostring_item(item x_item) {
-	string output = "ITEM: '" + GetItemName(x_item) + "'. [" + R2S(GetItemX(x_item)) + ", " + R2S(GetItemY(x_item)) + "]"
+string tostring_item(item x) {
+	string output = "ITEM: '" + GetItemName(x) + "'. [" + I2S(R2I(GetItemX(x))) + ", " + I2S(R2I(GetItemY(x))) + "]"
 	return output
 }
 
-string tostring_location(location x_location) {
-	string output = "LOCATION: [" + R2S(GetLocationX(x_location)) + ", " + R2S(GetLocationY(x_location)) + "]"
+string tostring_location(location x) {
+	string output = "LOCATION: [" + I2S(R2I(GetLocationX(x))) + ", " + I2S(R2I(GetLocationY(x))) + "]"
 	return output
 }
 

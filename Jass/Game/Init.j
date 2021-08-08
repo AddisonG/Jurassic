@@ -6,7 +6,7 @@ include "cj_typesEx_priv.j"
 globals
 	force PLAYERS = CreateForce()
 	group SURVIVOR_GROUP = CreateGroup()
-	survivor_survivor array SURVIVORS[10]
+	Survivor array SURVIVORS[10]
 
 	rect WHOLE_MAP
 	timer GRACE_TIMER = CreateTimer()
@@ -56,29 +56,28 @@ endglobals
 
 bool Player_Definition() {
 	// Player is both a user, and is playing (No idea if this is how you're meant to do it)
-	return (GetPlayerController(GetFilterPlayer()) == MAP_CONTROL_USER) && \
-		(GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING)
+	return (GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING)
 }
 
 void Player_Setup() {
-	debug BJDebugMsg("Player_Setup #" + I2S(GetPlayerId(GetEnumPlayer())))
+	int player_id = GetPlayerId(GetEnumPlayer())
+	debug BJDebugMsg("Player_Setup #" + I2S(player_id))
 	location surv_spawn = PolarProjectionBJ(MAP_CENTER, GetRandomInt(0, 300), GetRandomInt(0, 359))
 
 	// Spawn a survivor for the player
-	survivor_survivor s = survivor_survivor.create(CreateUnitAtLoc(GetEnumPlayer(), SURVIVOR_UNIT_TYPE, surv_spawn, GetRandomInt(0, 360)), GetEnumPlayer())
-	GroupAddUnit(SURVIVOR_GROUP, s.getUnit())
+	Survivor s = Survivor.create(surv_spawn, GetEnumPlayer())
+	GroupAddUnit(SURVIVOR_GROUP, s.get_unit())
 
 	// Add them to the SURVIVORS group, and select them for the player
-	SURVIVORS[GetPlayerId(GetEnumPlayer())] = s
-	debug_unit(SURVIVORS[0].getUnit())
+	SURVIVORS[player_id] = s
 	if (GetLocalPlayer() == GetEnumPlayer()) {
 		// Select the unit for the player who owns it
 		ClearSelection()
-		SelectUnit(s.getUnit(), true)
+		SelectUnit(s.get_unit(), true)
 	}
 
 	// Create a group for storing the dinosaurs assigned to this player
-	DINOSAUR_GROUPS[GetPlayerId(GetEnumPlayer())] = CreateGroup()
+	DINOSAUR_GROUPS[player_id] = CreateGroup()
 
 	PanCameraToTimedLocForPlayer(GetEnumPlayer(), surv_spawn, 3.00)
 

@@ -1,25 +1,25 @@
-void Drop_Tools(unit survivor) {
+void drop_tools(unit survivor) {
 	// Remove the harvest ability from the survivor
 	UnitRemoveAbility(survivor, 'HRVT')
 	DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 3, \
 		"Dropped tools. Type -pickup or -tools to pick them up again.")
 }
 
-void Pickup_Tools(unit survivor) {
+void pickup_tools(unit survivor) {
 	// Give survivor the harvest ability
 	UnitAddAbility(survivor, 'HRVT')
 	DisplayTimedTextToPlayer(GetTriggerPlayer(), 0, 0, 3, \
 		"Picked up tools. Type -drop to drop them again.")
 }
 
-void Pickup_Drop_Tools_Actions() {
+void pickup_drop_tools_actions() {
 	string message = GetEventPlayerChatString()
 	int triggering_player_id = GetPlayerId(GetTriggerPlayer())
 	SURVIVORS[triggering_player_id].debug()
 	if (message == "-drop") {
-		Drop_Tools(SURVIVORS[triggering_player_id].getUnit())
+		drop_tools(SURVIVORS[triggering_player_id].get_unit())
 	} else {
-		Pickup_Tools(SURVIVORS[triggering_player_id].getUnit())
+		pickup_tools(SURVIVORS[triggering_player_id].get_unit())
 	}
 }
 
@@ -35,5 +35,5 @@ void InitTrig_Pickup_Drop_Tools() {
 		i++
 	}
 
-	TriggerAddAction(t, function Pickup_Drop_Tools_Actions)
+	TriggerAddAction(t, function pickup_drop_tools_actions)
 }

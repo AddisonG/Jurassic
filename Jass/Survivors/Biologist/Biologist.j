@@ -1,18 +1,15 @@
-scope biologist {
+constant int BIOLOGIST_RESEARCH = 'BIOL'
 
-	private constant int BIOLOGIST_RESEARCH = 'BIOL'
+struct Biologist extends array {
+	implement Alloc
 
-	public struct biologist {
+	public static thistype create() {
+		thistype data = thistype.allocate()
+		return data
+	}
 
-		public static biologist create() {
-			biologist data = biologist.allocate()
-
-			return data
-		}
-
-		public bool isTrained(player owner) {
-			// Check if upgrade is researched
-			return GetPlayerTechCount(owner, BIOLOGIST_RESEARCH, true) >= 1
-		}
+	public bool is_trained(player owner) {
+		// Check if upgrade is researched
+		return GetPlayerTechCount(owner, BIOLOGIST_RESEARCH, true) >= 1
 	}
 }

@@ -1,18 +1,15 @@
-scope poacher {
+constant int POACHER_RESEARCH = 'POCH'
 
-	private constant int POACHER_RESEARCH = 'POCH'
+struct Poacher extends array {
+	implement Alloc
 
-	public struct poacher {
+	public static thistype create() {
+		thistype data = thistype.allocate()
+		return data
+	}
 
-		public static poacher create() {
-			poacher data = poacher.allocate()
-
-			return data
-		}
-
-		public bool isTrained(player owner) {
-			// Check if upgrade is researched
-			return GetPlayerTechCount(owner, POACHER_RESEARCH, true) >= 1
-		}
+	public bool is_trained(player owner) {
+		// Check if upgrade is researched
+		return GetPlayerTechCount(owner, POACHER_RESEARCH, true) >= 1
 	}
 }

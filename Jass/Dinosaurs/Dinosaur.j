@@ -14,7 +14,7 @@ constant real CIRCLE_CENTER_DISTANCE_EXTRA = 100
 // the same moment if a loop is used to move several at once.
 constant real MAX_MOVE_DELAY = 6
 
-struct dinosaur extends array {
+struct Dinosaur extends array {
 	implement Alloc
 
 	// The dino unit

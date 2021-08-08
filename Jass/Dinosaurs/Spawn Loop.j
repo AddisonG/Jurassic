@@ -1,5 +1,5 @@
 /*
-A random point will is generated somewhere within a doughnut shape around each
+A random point is generated somewhere within a donut shape around each
 survivor, to be used as the point to spawn a dinosaur at.
 
 The initial minimum distance is: (1000 - 150 * difficulty) units
@@ -30,7 +30,7 @@ In this way, it will become more likely to spawn successfully the longer the
 spawner tries, although the maximum spawn distance is reset upon a successful
 spawn. This method is not a completely effective fix, as the game will likely
 lag terribly (when dinos spawn) in the event of the previous scenario occurring
-(which is not impossible or improbable).
+(which is not impossible).
 */
 
 scope SpawnLoop
@@ -40,8 +40,11 @@ scope SpawnLoop
 	// Returns false if the point is closer than MinDistance to the point.
 	// Math is: sqrt((player_x - spawn_x)^2 + (player_y - spawn_y)^2).
 	bool Proximity_Check() {
-		real x_diff_sqrd = Pow(GetLocationX(spawn_point) - GetLocationX(survivor_location), 2)
-		real y_diff_sqrd = Pow(GetLocationY(spawn_point) - GetLocationY(survivor_location), 2)
+		location other_survivor = GetUnitLoc(GetEnumUnit())
+		real x_diff_sqrd = Pow(GetLocationX(spawn_point) - GetLocationX(other_survivor), 2)
+		real y_diff_sqrd = Pow(GetLocationY(spawn_point) - GetLocationY(other_survivor), 2)
+		RemoveLocation(other_survivor)
+		other_survivor = null
 		return SquareRoot(x_diff_sqrd + y_diff_sqrd) >= SPAWN_MIN_DIST
 	}
 
@@ -62,7 +65,6 @@ scope SpawnLoop
 
 	void Spawn_Dinosaur() {
 		debug BJDebugMsg("Spawn_Dinosaur")
-		// Don't merge this line
 		survivor_location = GetUnitLoc(GetEnumUnit())
 
 		// MaxDistance is set to the MinDistance + 3000. This makes a donut shape
