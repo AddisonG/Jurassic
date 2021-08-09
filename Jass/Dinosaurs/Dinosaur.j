@@ -75,8 +75,6 @@ struct Dinosaur extends array {
 			GetRandomInt(0, IMaxBJ(CIRCLE_RADIUS_MINIMUM, \
 				R2I(distance * CIRCLE_RADIUS_PERCENT))), \
 			GetRandomInt(0, 360))
-		// NOTE: The point selected tends towards the center, due to the
-		// imperfect nature of the method I used. FIXME?
 
 		// CODE FOR PERFECT DISTRIBUTION OF POINTS IN CIRCLE
 		/*real t = 2 * bj_PI * GetRandomReal(0, 1)

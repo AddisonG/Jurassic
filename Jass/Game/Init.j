@@ -16,8 +16,6 @@ globals
 	trigger SPAWN_TRIGGER
 	trigger MOVE_TRIGGER
 
-	hashtable array DINO_TABLE[10]
-	group array DINOSAUR_GROUPS
 	location MAP_CENTER
 
 	int DIFFICULTY
@@ -26,7 +24,6 @@ globals
 	int DINO_ANGER
 	int DINO_LEVEL
 
-	real SPAWN_MAX_DIST
 	real SPAWN_MIN_DIST
 
 	dialog DIFFICULTY_MENU = DialogCreate()
@@ -76,9 +73,6 @@ void Player_Setup() {
 		ClearSelection()
 		SelectUnit(s.get_unit(), true)
 	}
-
-	// Create a group for storing the dinosaurs assigned to this player
-	DINOSAUR_GROUPS[player_id] = CreateGroup()
 
 	PanCameraToTimedLocForPlayer(GetEnumPlayer(), surv_spawn, 3.00)
 

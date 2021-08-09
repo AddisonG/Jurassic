@@ -1,5 +1,4 @@
 void Difficulty_Actions() {
-	// debug BJDebugMsg("Difficulty_Actions")
 	int difficulty_num = 4 // Number of choices available
 	int i = 0
 	while (i <= difficulty_num) {

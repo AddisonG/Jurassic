@@ -72,6 +72,6 @@ void InitTrig_Director() {
 	// The director begins as soon as the grace period is over
 	trigger t = CreateTrigger()
 	// TriggerRegisterTimerExpireEvent(t, GRACE_TIMER)
-	TriggerRegisterTimerEvent(t, 1, false) // TEMPORARY
+	TriggerRegisterTimerEvent(t, 10, false) // FIXME TEMPORARY
 	TriggerAddAction(t, function Director_Actions)
 }
