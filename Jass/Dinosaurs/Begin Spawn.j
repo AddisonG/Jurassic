@@ -1,13 +1,7 @@
 void Begin_Spawn_Actions() {
-	debug BJDebugMsg("Begin_Spawn_Actions")
 	DINO_LEVEL = 0
 	DINO_ANGER = 0
 	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, "The dinosaurs approach...")
-
-	// Begin spawning dinosaurs.
-	TriggerRegisterTimerEvent(SPAWN_TRIGGER, 30 - DIFFICULTY * 2, true)
-	EnableTrigger(SPAWN_TRIGGER)
-	EnableTrigger(MOVE_TRIGGER)
 
 	// Begin the level and anger timers. They scale according to difficulty.
 	TimerStart(LEVEL_TIMER, 180 + (20 * DIFFICULTY), true, null)
@@ -20,7 +14,8 @@ void Begin_Spawn_Actions() {
 	DestroyTimer(GRACE_TIMER)
 
 	// Start the timer to mark the end of the game
-	TimerStart(SURVIVE_TIMER, 1800 + 600 * DIFFICULTY, false, null)
+	// TimerStart(SURVIVE_TIMER, 1800 + 600 * DIFFICULTY, false, null)
+	TimerStart(SURVIVE_TIMER, 60, false, null) // TEMP
 	TIMER_DISPLAY = CreateTimerDialog(SURVIVE_TIMER)
 	TimerDialogSetTitle(TIMER_DISPLAY, "Time until rescue")
 	TimerDialogDisplay(TIMER_DISPLAY, true)

@@ -15,7 +15,7 @@ struct Survivor extends array {
 	public int kill_counter
 
 	public static thistype create(location loc, player play) {
-		debug BJDebugMsg("Creating survivor")
+		log("Creating survivor")
 		thistype data = thistype.allocate()
 
 		data.u = CreateUnitAtLoc(play, SURVIVOR_UNIT_TYPE, loc, GetRandomInt(0, 360))
@@ -50,9 +50,9 @@ struct Survivor extends array {
 	}
 
 	public void debug() {
-		debug BJDebugMsg("Player: " + I2S(GetPlayerId(this.p)))
-		debug BJDebugMsg("Name: " + GetUnitName(this.u))
-		debug BJDebugMsg("Position: " + I2S(R2I(GetUnitX(this.u))) + ", " + I2S(R2I(GetUnitY(this.u))))
+		log("Player: " + I2S(GetPlayerId(this.p)))
+		log("Name: " + GetUnitName(this.u))
+		log("Position: " + I2S(R2I(GetUnitX(this.u))) + ", " + I2S(R2I(GetUnitY(this.u))))
 	}
 
 	public void killed_unit() {

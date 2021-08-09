@@ -1,18 +1,13 @@
 // The radius of the circle the dinosaur will move to, relative to the
 // length of the line between the dinosaur and the target
 constant real CIRCLE_RADIUS_PERCENT = 0.40
-constant int CIRCLE_RADIUS_MINIMUM = 300
+constant int CIRCLE_RADIUS_MINIMUM = 800
 
 // The center of the circle the dinosaur will move to, relative to the
 // target, and the line between the dinosaur and the target
 // (0 is on the survivor, 1 is on the dinosaur)
-constant real CIRCLE_CENTER_DISTANCE_PERCENT = 0.30
-constant real CIRCLE_CENTER_DISTANCE_EXTRA = 100
-
-// A time between 0 and MAX_MOVE_DELAY seconds is chosen before the dinosaur
-// will actually begin its move. This is to prevent dinosaurs from moving at
-// the same moment if a loop is used to move several at once.
-constant real MAX_MOVE_DELAY = 6
+constant real CIRCLE_CENTER_DISTANCE_PERCENT = 0.20
+constant real CIRCLE_CENTER_DISTANCE_EXTRA = 500
 
 struct Dinosaur extends array {
 	implement Alloc
@@ -28,7 +23,7 @@ struct Dinosaur extends array {
 	public unit target
 
 	public static thistype create(integer dino_type, location spawn_loc, unit target) {
-		debug BJDebugMsg("Dino create")
+		log("Dino create")
 		thistype data = thistype.allocate()
 
 		data.target = target
@@ -43,10 +38,10 @@ struct Dinosaur extends array {
 	}
 
 	/**
-	 * Sets the dinosaur to attack move somewhere in a circle located
-	 * between the dinosaur and the target. This prevents the dinosaur from
-	 * following in a straight line towards the target, and ensures that
-	 * several dinosaurs don't clump up too much.
+	 * Sets the dinosaur to attack move somewhere in a circle around the
+	 * target. This prevents the dinosaur from following in a straight line
+	 * towards the target, and ensures that several dinosaurs don't clump up
+	 * too much.
 	 *
 	 * There are a few variables here for attempting to get dinosaurs to
 	 * surround the survivors, and not end up stuck in a single area.
@@ -55,9 +50,7 @@ struct Dinosaur extends array {
 	 * TODO: Factor in invisible targets
 	 */
 	public void approach() {
-		debug BJDebugMsg("Dino approach")
-
-		TriggerSleepAction(GetRandomReal(0, MAX_MOVE_DELAY))
+		log("Dino approach")
 
 		// Find the distance and angle between the dinosaur and target
 		location dino_location = GetUnitLoc(dino)
@@ -92,16 +85,16 @@ struct Dinosaur extends array {
 
 	// Make the dino wander aimlessly, within a small area
 	public void wander() {
-		debug BJDebugMsg("Dino wander")
+		log("Dino wander")
 	}
 
 	// This executes on dinosaur death
 	public void death() {
-		debug BJDebugMsg("Dino death")
+		log("Dino death")
 	}
 
 	public void print_dino() {
-		debug BJDebugMsg("")
+		log("")
 	}
 
 	public void destroy() {

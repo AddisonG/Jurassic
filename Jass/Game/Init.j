@@ -13,8 +13,6 @@ globals
 	timer SURVIVE_TIMER = CreateTimer()
 	timer EVAC_TIMER = CreateTimer()
 	timerdialog TIMER_DISPLAY
-	trigger SPAWN_TRIGGER
-	trigger MOVE_TRIGGER
 
 	location MAP_CENTER
 
@@ -84,7 +82,6 @@ void Player_Setup() {
 }
 
 void Init_Actions() {
-	debug BJDebugMsg("Init_Actions")
 	StopMusic(false)
 	PauseGame(true)
 
@@ -96,6 +93,10 @@ void Init_Actions() {
 	// Define globals
 	WHOLE_MAP = bj_mapInitialPlayableArea
 	MAP_CENTER = Location(GetRectCenterX(WHOLE_MAP), GetRectCenterY(WHOLE_MAP))
+
+	// Set map as already explored. Means you don't have to see an area to place
+	// a tent, fire, etc.
+	FogMaskEnable(false)
 
 	// Set up the dinosaurs (player 12 - brown) to give bounty
 	SetPlayerState(Player(11), PLAYER_STATE_GIVES_BOUNTY, 1)

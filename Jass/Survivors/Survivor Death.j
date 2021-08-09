@@ -1,8 +1,3 @@
-bool Survivor_Death_Conditions() {
-	// Return true if unit was a survivor
-	return GetUnitTypeId(GetTriggerUnit()) == SURVIVOR_UNIT_TYPE
-}
-
 void Survivor_Death_Actions() {
 	debug BJDebugMsg("Survivor_Death_Actions")
 	SURVIVORS[GetPlayerId(GetOwningPlayer(GetTriggerUnit()))].death_actions()
@@ -41,6 +36,6 @@ void InitTrig_Survivor_Death() {
 	TriggerRegisterPlayerUnitEvent(t, Player(5), EVENT_PLAYER_UNIT_DEATH, null)
 	TriggerRegisterPlayerUnitEvent(t, Player(6), EVENT_PLAYER_UNIT_DEATH, null)
 
-	TriggerAddCondition(t, Condition(function Survivor_Death_Conditions))
+	TriggerAddCondition(t, Condition(function Survivor_Unit_Condition))
 	TriggerAddAction(t, function Survivor_Death_Actions)
 }

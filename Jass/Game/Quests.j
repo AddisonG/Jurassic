@@ -1,8 +1,6 @@
 void Quest_Actions() {
 	string title, desc, icon, alert
 
-	TriggerSleepAction(10)
-
 	// Building a basic base
 	title = "Building a basic base"
 	desc = "Type '-base' to find good locations to set up a base. You'll " + \
@@ -11,7 +9,7 @@ void Quest_Actions() {
 	alert = "You should build a base. See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	TriggerSleepAction(60)
 
@@ -22,7 +20,7 @@ void Quest_Actions() {
 	alert = "You should try and gather wood and metal. See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	TriggerSleepAction(120)
 
@@ -36,7 +34,7 @@ void Quest_Actions() {
 	alert = "You should soon consider getting a qualification. See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	TriggerSleepAction(300)
 
@@ -47,7 +45,7 @@ void Quest_Actions() {
 	alert = "There are several powerful text-commands for sharing/etc. See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	TriggerSleepAction(600)
 
@@ -58,7 +56,7 @@ void Quest_Actions() {
 	alert = "Don't forget that you have to eventually escape! See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	DestroyTrigger(GetTriggeringTrigger())
 
@@ -73,7 +71,7 @@ Olofmoleman - The vast majority of dinosaur models and icons."
 	alert = "Kudos to Broiler, and the others who made this possible! See quests (F9) for more info."
     CreateQuestBJ(bj_QUESTTYPE_REQ_DISCOVERED, title, desc, icon)
 	FlashQuestDialogButton()
-	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, alert)
+	announce(alert)
 
 	DestroyTrigger(GetTriggeringTrigger())
 }
@@ -81,6 +79,6 @@ Olofmoleman - The vast majority of dinosaur models and icons."
 //===========================================================================
 void InitTrig_Quests() {
 	trigger t = CreateTrigger()
-	TriggerRegisterTimerEvent(t, 5, false)
+	TriggerRegisterTimerEvent(t, 10, false)
 	TriggerAddAction(t, function Quest_Actions)
 }

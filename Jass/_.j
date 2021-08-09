@@ -1,3 +1,11 @@
+void log(string x) {
+	debug BJDebugMsg(x)
+}
+
+void announce(string x) {
+	DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 5, x)
+}
+
 /**
  * Remember: The index expected to be typed by the player is in the range 1-7,
  * but the players actual indexes are 0-6.
@@ -27,10 +35,15 @@ bool Sharing_Conditions() {
 	return true
 }
 
+bool Survivor_Unit_Condition() {
+	// Return true if unit was a survivor
+	return GetUnitTypeId(GetTriggerUnit()) == SURVIVOR_UNIT_TYPE
+}
+
 real Hit_Chance(real distance, int effectiveRange, int accuracy) {
-	debug BJDebugMsg("distance: " + R2S(distance))
-	debug BJDebugMsg("effectiveRange: " + I2S(effectiveRange))
-	debug BJDebugMsg("accuracy: " + I2S(accuracy))
+	log("distance: " + R2S(distance))
+	log("effectiveRange: " + I2S(effectiveRange))
+	log("accuracy: " + I2S(accuracy))
 	if (distance <= effectiveRange) {
 		// The shot is within the effective range. Accuracy is unchanged
 		return I2R(accuracy)
@@ -95,17 +108,17 @@ string tostring_spell() {
 }
 
 void debug_unit(unit x) {
-	debug BJDebugMsg(tostring_unit(x))
+	log(tostring_unit(x))
 }
 
 void debug_item(item x) {
-	debug BJDebugMsg(tostring_item(x))
+	log(tostring_item(x))
 }
 
 void debug_location(location x) {
-	debug BJDebugMsg(tostring_location(x))
+	log(tostring_location(x))
 }
 
 void debug_spell() {
-	debug BJDebugMsg(tostring_spell())
+	log(tostring_spell())
 }
