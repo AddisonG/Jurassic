@@ -23,6 +23,9 @@ struct Director extends array {
 	}
 
 	private void prepend_dino(Dinosaur dino) {
+		if (dino == null) {
+			return
+		}
 		dino.next = dino_list
 		if (dino_list > 0) {
 			dino_list.prev = dino
@@ -72,6 +75,6 @@ void InitTrig_Director() {
 	// The director begins as soon as the grace period is over
 	trigger t = CreateTrigger()
 	// TriggerRegisterTimerExpireEvent(t, GRACE_TIMER)
-	TriggerRegisterTimerEvent(t, 10, false) // FIXME TEMPORARY
+	// TriggerRegisterTimerEvent(t, 10, false) // FIXME TEMPORARY
 	TriggerAddAction(t, function Director_Actions)
 }

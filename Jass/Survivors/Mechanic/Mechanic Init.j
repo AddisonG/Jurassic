@@ -30,11 +30,13 @@ globals
 endglobals
 
 void Setup_Mechanic() {
+
+	// FIXME - fix all of these. Maybe hard code them less?
+	// The ID strings are all messed up
+
 	/////////////
 	// ENGINES //
 	/////////////
-
-	// TODO - fix all of these. Maybe hard code them less?
 
 	// Heat
 	ENGINE_NAME[0] = "Heat"

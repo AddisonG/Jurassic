@@ -109,6 +109,13 @@ struct Spawner {
 	 * survivors. If it's too close to one of them, reject it.
 	**/
 	private bool valid_spawn_location(location loc) {
+		// Ensure it is pathable, and inside map
+		bool pathable = IsTerrainPathable(GetLocationX(loc), GetLocationY(loc), PATHING_TYPE_WALKABILITY)
+		pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(loc), GetLocationY(loc))
+		if (not pathable) {
+			return false
+		}
+
 		int s = 0
 		while (s < 7) {
 			if (SURVIVORS[s].is_alive()) {
@@ -135,10 +142,6 @@ struct Spawner {
 			potential_spawn = PolarProjectionBJ(survivor_location, \
 				GetRandomReal(min_distance, max_distance), GetRandomReal(0, 359))
 
-			// Ensure it is pathable, and inside map
-			bool pathable = IsTerrainPathable(GetLocationX(potential_spawn), GetLocationY(potential_spawn), PATHING_TYPE_WALKABILITY)
-			pathable = pathable && RectContainsCoords(WHOLE_MAP, GetLocationX(potential_spawn), GetLocationY(potential_spawn))
-
 			// Ensure it isn't too close to any other survivor
 			if (!valid_spawn_location(potential_spawn)) {
 				RemoveLocation(potential_spawn)
@@ -161,8 +164,10 @@ struct Spawner {
 		}
 		int dino_type = get_dino_type()
 		location dino_spawn = get_dino_spawn_location()
+		Dinosaur new_dino = Dinosaur.create(dino_type, dino_spawn, target)
+		RemoveLocation(dino_spawn)
 
-		return Dinosaur.create(dino_type, dino_spawn, target)
+		return new_dino
 	}
 
 	public bool is_enabled() {
